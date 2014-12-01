@@ -1,0 +1,91 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
+	<title>Final de Fisica I - UCALP</title>
+	
+	<!-- Estilos -->
+	<link href="css/examples.css" rel="stylesheet" type="text/css">
+	
+	<!-- Librerias -->
+	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/lib/excanvas.min.js"></script><![endif]-->
+	<script language="javascript" type="text/javascript" src="js/lib/jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="js/lib/jquery.flot.js"></script>
+	<script language="javascript" type="text/javascript" src="js/lib/jquery.flot.animator.min.js"></script>
+	
+	
+	<!-- Codigo de la aplicacion -->
+	<script language="javascript" type="text/javascript" src="js/calculos.js"></script>
+	<script language="javascript" type="text/javascript" src="js/animaciones.js"></script>
+
+	<!-- Inicializacion -->	
+	<script language="javascript" type="text/javascript" src="js/app.js"></script>
+	
+	
+
+</head>
+<body>
+
+	<div id="header">
+		<h2>Fisica I </h2>
+	</div>
+
+	
+	<div class="container">
+		<div class="demo-container" >
+			<div class="fields"> 
+				<h2>Parametros</h2>
+				
+				<label> Campo 1
+					<input id="" type="text" class="campo" />
+				</label>
+				
+				<label class="col_2"> Campo 3
+					<input id="" type="text" class="campo" />
+				</label>
+				
+				<br/><br/>
+				
+				<label> Campo 2
+					<input id="" type="text" class="campo" />
+				</label>
+				
+				<label class="col_2"> Campo 4
+					<input id="" type="text" class="campo" />
+				</label>
+				
+				<br/><br/>
+				
+				<label> Tipo:
+					<select id="tipo_simulacion">
+						<option value="vertical"> Vertical</option>
+						<option value="horizontal"> Horizontal</option>
+					</select>
+				</label>
+				
+				<br/><br/>
+				
+				<div style="float:right;">
+					<input id="simular" type="button" value="Simular">
+				</div>
+				
+			
+			</div>
+			<img src="img/tanque.png" style="width:345px;position:absolute; margin-top:200px;"/>
+			<div id="line" class="caudal-vertical"></div>
+			<div id="placeholder" class="demo-placeholder" style="margin-top: 325px;margin-left: 230px; width:700px;"></div>
+		</div>
+	</div>
+	
+	
+	<div class="footer">
+		<b>Integrantes:</b> Maximiliano Stranich,  Ignacio Diaz Maurino, Ricardo Daniel Vella
+	</div>
+
+
+
+
+</body>
+</html>
