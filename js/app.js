@@ -2,7 +2,6 @@
 
 	$(function() {
 	
-
 	
 	var simulaciones = {
 		
@@ -29,6 +28,7 @@
 
 			// simular
 			simulaciones[tipo_simulacion]();
+			vaciarTanque();
 		
 		});
 		

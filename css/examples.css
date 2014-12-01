@@ -64,3 +64,17 @@
 	font-size: 12px;
 	color: gray;
 }
+
+
+
+.water {
+background-color: #00BFFF;
+width: 215px;
+position: absolute;
+height: 140px;
+margin-top: 245px;
+z-index: 5;
+margin-left: 65px;
+border-radius: 0 0 20px 20px;
+opacity: 0.5;
+}

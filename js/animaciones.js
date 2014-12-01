@@ -1,3 +1,26 @@
+(function($) {
+	$.fn.lower = function(options) {
+	
+		options = $.extend({
+			speed: 1000,
+			max: '100%',
+			background: '#fff'
+		}, options);
+		
+		return this.each(function() {
+			var $element = $(this);
+			$element.prepend('<div class="lower"></div>');
+			$('div.lower', $element).css('backgroundColor', options.background);
+			
+			$('div.lower', $element).animate({
+				height: options.max
+			}, options.speed);
+		});
+	};
+
+})(jQuery);
+
+
 
 
 	function drawCaudalHorizontal(data){
@@ -50,6 +73,13 @@
 	
 	
 	function cleanUI() {
-	$("#placeholder").hide();
+	    $("#placeholder").hide();
 		$("#line").css("height", "0px");
+		$("#water").remove();
+		$("#water_cont").append('<div id="water" class="water"></div>');
+	}
+	
+	
+	function vaciarTanque() {
+		$("#water").lower();
 	}
