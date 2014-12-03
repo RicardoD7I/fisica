@@ -10,7 +10,7 @@
 		return this.each(function() {
 			var $element = $(this);
 			$element.prepend('<div class="lower"></div>');
-			$('div.lower', $element).css('backgroundColor', options.background);
+		//	$('div.lower', $element).css('backgroundColor', options.background);
 			
 			$('div.lower', $element).animate({
 				height: options.max
@@ -21,23 +21,31 @@
 })(jQuery);
 
 
-
+var plot = null;
 
 	function drawCaudalHorizontal(data){
-		$("#placeholder").show();
+		$("#eje_coord").show();
 
-				$.plotAnimator("#placeholder", [
+			plot =	$.plotAnimator("#eje_coord", [
 			{ label: "Chorro de agua", data: data,  color: "#00BFFF",
-    lines: {
-        lineWidth: 1,
-        fillColor: {
-            colors: [{ opacity: 1 }, { opacity: 1 } ]
+              lines: {
+              lineWidth: 1,
+              fillColor: {
+              colors: [{ opacity: 1 }, { opacity: 1 } ]
         }
     } }
 		], {
 			series: {
 				lines: { show: true },
 			},
+			 yaxis:
+    {
+        min:-24, max: 0,  tickSize: 5 
+    },
+		 xaxis:
+    {
+        min:0, max: 24,  tickSize: 5 
+    },
 	
 			grid: {
 				borderWidth: {
@@ -48,6 +56,19 @@
 				}
 			}
 		});
+		
+	}
+	
+	
+	function reDraw() {
+	//time passes, you now want to replot
+
+var newData = [[0,2],[1,3],[2,5]];
+
+plot.setData(newData);
+plot.setupGrid(); //only necessary if your new data will change the axes or grid
+plot.draw();
+	
 	}
 	
 	
@@ -67,19 +88,27 @@
 	
 		}
 		
-		incrementLine(1, 330);
+		incrementLine(1, 200);
 		
 	}
 	
 	
 	function cleanUI() {
-	    $("#placeholder").hide();
+	    $("#eje_coord").hide();
 		$("#line").css("height", "0px");
 		$("#water").remove();
-		$("#water_cont").append('<div id="water" class="water"></div>');
+		$("#water_cont").append('<div id="water" class="water forma-agua"></div>');
 	}
 	
 	
-	function vaciarTanque() {
-		$("#water").lower();
+	function vaciarTanque(limit) {
+		var size = 100;
+		if (limit) {
+			size = size - limit;
+		}
+	
+	
+		$("#water").lower({
+			max : size + "px"
+		});
 	}

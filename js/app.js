@@ -28,8 +28,8 @@
 
 			// simular
 			simulaciones[tipo_simulacion]();
-			vaciarTanque();
-		
+			vaciarTanque(15);
+
 		});
 		
 
