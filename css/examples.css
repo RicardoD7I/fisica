@@ -65,8 +65,8 @@ background-color: #00BFFF;
 opacity: 0.5;
 width: 140px;
 position: absolute;
-height: 100px;
-margin-top: 90px;
+height: 90px;
+margin-top: 100px;
 z-index: 5;
 margin-left: 50px;
 
@@ -80,4 +80,15 @@ margin-left: 50px;
 .tanque {
   position: absolute;
   margin-top: 60px;
+}
+
+.charco {
+width: 10px;
+height: 70px;
+background-color: #00BFFF;
+bottom: 10px;
+position: absolute;
+left: 300px;
+transform: rotateX( 80deg );
+border-radius: 100px;
 }

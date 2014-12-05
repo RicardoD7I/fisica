@@ -21,20 +21,56 @@
 })(jQuery);
 
 
-var plot = null;
 
-	function drawCaudalHorizontal(data){
+	function drawCaudalHorizontal(data, notAnimated){
+		var plotter = "plotAnimator";
+	
 		$("#eje_coord").show();
+		cleanUI(); 
+	
+		if (notAnimated) {
+		 plotter = "plot";
+		}
+		
+		$("#eje_coord").on("animatorComplete", function() {
+				$(this).off();
+				drawCharco(0, 100);
+				setTimeout(function(){
+					update();
+				
+				}, 1000)
+				
+		});
+		
+		return $[plotter](
+			$("#eje_coord"), 
+			getPlotSettings(data), 
+			getGridOptions()
+		);
+		
 
-			plot =	$.plotAnimator("#eje_coord", [
-			{ label: "Chorro de agua", data: data,  color: "#00BFFF",
+		
+		
+	}
+	
+	
+	function getPlotSettings(data){
+	
+	  return [{ 
+	          label: "Chorro de agua", data: data,  color: "#00BFFF",
               lines: {
-              lineWidth: 1,
-              fillColor: {
-              colors: [{ opacity: 1 }, { opacity: 1 } ]
-        }
-    } }
-		], {
+                lineWidth: 1,
+                fillColor: {
+                  colors: [{ opacity: 1 }, { opacity: 1 } ]
+                }
+              } 
+			}];
+	
+	}
+	
+	function getGridOptions () {
+	
+	return {
 			series: {
 				lines: { show: true },
 			},
@@ -55,21 +91,29 @@ var plot = null;
 					left: 2
 				}
 			}
-		});
+		};
+	
+	}
+	
+	function reDraw(val) {
+		setTimeout(function(){
+			if (val > 0) {
+			   var data = getCaudalHorizontalData(val - 0.5, val);
+			   drawCaudalHorizontal(data, true)
+			   reDraw(val - 0.5)
+			} else {
+				drawCaudalHorizontal(null, true)
+			}
+		}, 50 + (val * 20));
+	}
+
 		
-	}
-	
-	
-	function reDraw() {
-	//time passes, you now want to replot
+		function update() {
 
-var newData = [[0,2],[1,3],[2,5]];
+		  reDraw(5)
 
-plot.setData(newData);
-plot.setupGrid(); //only necessary if your new data will change the axes or grid
-plot.draw();
-	
-	}
+		}
+		
 	
 	
 		function drawCuadalVertical() {
@@ -94,10 +138,11 @@ plot.draw();
 	
 	
 	function cleanUI() {
-	    $("#eje_coord").hide();
+	    $("#eje_coord").unbind();
 		$("#line").css("height", "0px");
-		$("#water").remove();
-		$("#water_cont").append('<div id="water" class="water forma-agua"></div>');
+		$("#eje_coord").remove();
+		$("#cont").append('<div id="eje_coord" class="eje_coord"></div>');
+	
 	}
 	
 	
@@ -107,8 +152,24 @@ plot.draw();
 			size = size - limit;
 		}
 	
-	
 		$("#water").lower({
 			max : size + "px"
 		});
+	}
+	
+	function drawCharco(init, end){
+		var charco = $("#charco");
+		charco.removeClass("hidden");
+	
+		setTimeout(function(){
+			var width = charco.css("width");
+			var bottom = parseInt(charco.css("bottom").replace("px", ""), 10);
+			if (end >= init) {
+				charco.css("width", init);
+				drawCharco(init + 1, end);
+			}
+		
+		},5)
+	
+	
 	}
