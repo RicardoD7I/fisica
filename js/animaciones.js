@@ -9,11 +9,11 @@
 		
 		return this.each(function() {
 			var $element = $(this);
-			$element.prepend('<div class="lower"></div>');
+			//$element.prepend('<div class="lower"></div>');
 		//	$('div.lower', $element).css('backgroundColor', options.background);
 			
-			$('div.lower', $element).animate({
-				height: options.max
+			$( $element).animate({
+				"margin-top": options.max
 			}, options.speed);
 		});
 	};
