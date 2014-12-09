@@ -22,7 +22,7 @@
 		$("#simular").click(function(){
 			
 			cleanUI();
-			
+			$("#charco").removeClass("charco_horizontal").removeClass("charco_vertical");
 			$("#charco").addClass("hidden");
 			$("#water").remove();
 			$("#water_cont").append('<div id="water" class="water forma-agua"></div>');
@@ -31,8 +31,9 @@
 			var tipo_simulacion= $("#tipo_simulacion").val();
 
 			// simular
-			simulaciones[tipo_simulacion]();
 			vaciarTanque(32 );
+			simulaciones[tipo_simulacion]();
+			
 				
 
 		});

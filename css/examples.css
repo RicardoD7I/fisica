@@ -38,8 +38,9 @@ margin-left: 165px;
 }
 
 .caudal-vertical {
-  margin-left: 108px;
-  margin-top: 200px;
+
+  z-index: 3;
+
   position: absolute;
   background-color: #00BFFF;
   width: 6px;
@@ -80,15 +81,29 @@ margin-left: 50px;
 .tanque {
   position: absolute;
   margin-top: 60px;
+  z-index:2;
 }
 
 .charco {
 width: 10px;
 height: 70px;
 background-color: #00BFFF;
-bottom: 10px;
 position: absolute;
-left: 300px;
 transform: rotateX( 80deg );
 border-radius: 100px;
 }
+
+
+.charco_horizontal {
+  bottom: 10px;
+  left: 300px;
+}
+
+.charco_vertical {
+  bottom: -4px;
+  left: 123px;
+}
+
+
+
+

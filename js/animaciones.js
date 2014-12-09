@@ -34,7 +34,7 @@
 		
 		$("#eje_coord").on("animatorComplete", function() {
 				$(this).off();
-				drawCharco(0, 100);
+				drawCharco(0, 100, "horizontal");
 				setTimeout(function(){
 					update();
 				
@@ -116,7 +116,7 @@
 		
 	
 	
-		function drawCuadalVertical() {
+	function drawCuadalVertical() {
 		var rate =  1;
 		var rateSeconds = 1;
 		
@@ -128,6 +128,21 @@
 				incrementLine(initial + rate, end)
 			}, rateSeconds);
 		
+		} else { 
+			drawCharco(0, 200, "vertical");
+			
+			var decrementLine = function(initial, end){
+			  alert(end);
+			  alert(initial);
+		      if (end >= initial ) {
+			    setTimeout(function(){
+				  
+				  $('#line').css("margin-top", initial); 
+				  decrementLine(initial + rate, end)
+  			    }, rateSeconds);
+		      } 
+	        }
+			decrementLine(1, 200);
 		}
 	
 		}
@@ -139,7 +154,7 @@
 	
 	function cleanUI() {
 	    $("#eje_coord").unbind();
-		$("#line").css("height", "0px");
+		$("#line").css("height", "0px").css("margin-top", "0px");
 		$("#eje_coord").remove();
 		$("#cont").append('<div id="eje_coord" class="eje_coord"></div>');
 	
@@ -155,10 +170,16 @@
 		$("#water").lower({
 			max : size + "px"
 		});
+		
 	}
 	
-	function drawCharco(init, end){
+	function drawCharco(init, end, tipo_animacion){
+	
+
 		var charco = $("#charco");
+		if (typeof tipo_animacion != "undefined") {
+		  charco.addClass("charco_" + tipo_animacion);
+		}
 		charco.removeClass("hidden");
 	
 		setTimeout(function(){
