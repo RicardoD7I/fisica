@@ -20,6 +20,9 @@
 	
 	
 		$("#simular").click(function(){
+		
+			var vaciadoDeTanque = 32;
+		
 			
 			cleanUI();
 			$("#charco").removeClass("charco_horizontal").removeClass("charco_vertical");
@@ -29,9 +32,12 @@
 			
 			// ver tipo de simulacion
 			var tipo_simulacion= $("#tipo_simulacion").val();
+			if (tipo_simulacion == "vertical") {
+			  vaciadoDeTanque = 0;
+			}
 
 			// simular
-			vaciarTanque(32 );
+			vaciarTanque(vaciadoDeTanque );
 			simulaciones[tipo_simulacion]();
 			
 				

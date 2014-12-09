@@ -34,7 +34,7 @@
 		
 		$("#eje_coord").on("animatorComplete", function() {
 				$(this).off();
-				drawCharco(0, 100, "horizontal");
+				drawCharco(0, 200, "horizontal");
 				setTimeout(function(){
 					update();
 				
@@ -123,7 +123,7 @@
 		var incrementLine = function(initial, end){
 		if (end >= initial ) {
 			setTimeout(function(){
-				//alert(initial)
+
 				$('#line').height(initial); 
 				incrementLine(initial + rate, end)
 			}, rateSeconds);
@@ -132,8 +132,6 @@
 			drawCharco(0, 200, "vertical");
 			
 			var decrementLine = function(initial, end){
-			  alert(end);
-			  alert(initial);
 		      if (end >= initial ) {
 			    setTimeout(function(){
 				  
