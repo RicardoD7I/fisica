@@ -18,6 +18,16 @@
 	
 	}
 	
+ $("input[name='demo_vertical2']").TouchSpin({
+      verticalbuttons: true,
+      verticalupclass: 'glyphicon glyphicon-plus',
+      verticaldownclass: 'glyphicon glyphicon-minus',
+	      min: 0,
+        max: 100,
+        step: 0.1,
+        decimals: 2
+    });
+	
 	
 		$("#simular").click(function(){
 		
