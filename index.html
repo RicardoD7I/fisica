@@ -66,7 +66,7 @@
 
 		<div id="cont" class="demo-container" >
 
-			<img src="img/tanque.png" class="tanque"/>
+			<img id="img_tanque" src="img/tanque.png" class="tanque"/>
 			
 			<div id="water_cont" class="forma-agua">
 				<div id="water" class="water forma-agua"></div>
@@ -116,11 +116,7 @@
         
 
 <div class="row">
-    <div class="col-md-5">
-        <label for="demo1">Densidad del fluido:</label> 
-		<input id="demo1" type="text" value="55" name="demo_vertical2">
-    </div>
-	
+
 	<div class="col-md-5">
         	<label> Tipo:
 					<select id="tipo_simulacion" class="form-control">
@@ -128,6 +124,16 @@
 					<option value="vertical"> Vertical</option>
 					</select>
 				</label>
+    </div>
+	<div class="col-md-5">
+        Tapa del tanque:
+		<label><input type="radio"  name="tapa_del_tanque" checked="checked" value="img/tanque.png">Si</label>
+		<label><input type="radio"  name="tapa_del_tanque" value="img/tanque_abierto.png">No</label>
+    </div>
+	
+	    <div class="col-md-5">
+        <label for="demo1">Densidad del fluido:</label> 
+		<input id="demo1" type="text" value="55" name="demo_vertical2">
     </div>
 	
 	    <div class="col-md-5">

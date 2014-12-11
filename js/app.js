@@ -28,6 +28,11 @@
         decimals: 2
     });
 	
+	 $("input[name='tapa_del_tanque']").on("click", function(){
+		var val = $(this).val();
+		$("#img_tanque").attr("src", val);
+	 });
+	
 	
 		$("#simular").click(function(){
 		
