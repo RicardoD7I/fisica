@@ -17,6 +17,16 @@
  */
 function StyledText(text, x, y, font, color, align, baseline) {
     /**
+     * Evaluates if a string is null, undefined or empty
+     * @param {string} str
+     * @return {boolean}
+     * @private
+     */
+    function _isNullOrWhiteSpace (str) {
+        return typeof str === 'undefined' || str === null || str.match(/^ *$/) !== null;
+    }
+
+    /**
      * @class StyledText
      * @constructor
      */
@@ -49,10 +59,10 @@ function StyledText(text, x, y, font, color, align, baseline) {
      */
     StyledText.prototype.paint = function (context) {
         context.save();
-        if (!String.isNullOrWhiteSpace(this.font)) context.font = this.font.toString();
-        if (!String.isNullOrWhiteSpace(this.font)) context.textAlign = this.align.toString();
-        if (!String.isNullOrWhiteSpace(this.font)) context.textBaseline = this.baseline.toString();
-        if (!String.isNullOrWhiteSpace(this.font)) context.fillStyle = this.color.toString();
+        if (!_isNullOrWhiteSpace(this.font)) context.font = this.font.toString();
+        if (!_isNullOrWhiteSpace(this.font)) context.textAlign = this.align.toString();
+        if (!_isNullOrWhiteSpace(this.font)) context.textBaseline = this.baseline.toString();
+        if (!_isNullOrWhiteSpace(this.font)) context.fillStyle = this.color.toString();
         context.fillText(this.text, this.x, this.y);
         context.restore();
     };

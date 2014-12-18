@@ -9,12 +9,23 @@
  * @param {number} [y]
  * @param {number} [width]
  * @param {number} [height]
+ * @param {CSSStyleDeclaration.color|string} [fillColor]
+ * @param {string} [imageSrc]
+ * @param {number} [angle]
+ * @param {number} [slicingX]
+ * @param {number} [slicingY]
  * @return {Rectangle}
  * @constructor
  */
-function Rectangle(x, y, width, height) {
-    function _degreesToRadians(/*Number*/angle) {
-        return angle * (Math.PI / 180);
+function Rectangle(x, y, width, height, fillColor, imageSrc, angle, slicingX, slicingY) {
+    /**
+     * Transform angles in degrees to radians
+     * @param {number} degrees
+     * @return {number}
+     * @private
+     */
+    function _degreesToRadians (degrees) {
+        return degrees * (Math.PI / 180);
     }
 
     /**
@@ -35,19 +46,20 @@ function Rectangle(x, y, width, height) {
         this.height = height || this.width;
 
         /** @type {string} */
-        this.fillStyle = "#000000";
+        this.fillStyle = fillColor || "#000000";
 
         /** @type {Image} */
         this.image = new Image();
+        if (imageSrc) this.image.src = imageSrc;
 
         /** @type {number} */
-        this.angle = 0;
+        this.angle = angle || 0;
 
         /** @type {number} */
-        this.slicingX = 0;
+        this.slicingX = slicingX || 0;
 
         /** @type {number} */
-        this.slicingY = 0;
+        this.slicingY = slicingY || 0;
     }
 
     /**
@@ -61,7 +73,7 @@ function Rectangle(x, y, width, height) {
         context.rotate(_degreesToRadians(this.angle));
         if (!this.image || (this.image && this.image.src == "")) {
             context.fillStyle = this.fillStyle;
-            context.fillRect(0, 0, this.width, this.height);
+            context.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
         } else {
             context.drawImage(this.image, this.slicingX, this.slicingY, this.width, this.height, -this.width / 2, -this.height / 2, this.width, this.height);
         }

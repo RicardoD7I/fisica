@@ -10,6 +10,12 @@
  * @property {number} to
  */
 
+/**
+ * Point
+ * @typedef {{}} Point
+ * @property {number} x
+ * @property {number} y
+ */
 
 /**
  * MathFunction Class
@@ -19,14 +25,14 @@
  * @param {number} from initial value of the range of values for x to graph the mathematical function.
  * @param {number} to end value of the range of values for x to graph the mathematical function.
  * @param {number} [step] increment that will be used to iterate the range of values for x, default is 1.
- * @param {number} [scaleX]
- * @param {number} [scaleY]
- * @param {CSSStyleDeclaration.stroke} [strokeStyle]
- * @param {number} [lineWidth]
+ * @param {number} [scaleX] horizontal scaling for plotting
+ * @param {number} [scaleY] vertical scaling for plotting
+ * @param {number} [lineWidth] line width
+ * @param {CSSStyleDeclaration.color|string} [color] line style
  * @return {MathFunction}
  * @constructor
  */
-function MathFunction(originX, originY, fn, from, to, step, scaleX, scaleY, lineWidth, strokeStyle) {
+function MathFunction(originX, originY, fn, from, to, step, scaleX, scaleY, lineWidth, color) {
     /**
      * @class MathFunction
      * @constructor
@@ -60,8 +66,8 @@ function MathFunction(originX, originY, fn, from, to, step, scaleX, scaleY, line
         /** @type {number} */
         this.lineWidth = lineWidth;
 
-        /** @type {CSSStyleDeclaration.color} */
-        this.strokeStyle = strokeStyle;
+        /** @type {CSSStyleDeclaration.color|string} */
+        this.color = color;
     }
 
     /**
@@ -74,10 +80,12 @@ function MathFunction(originX, originY, fn, from, to, step, scaleX, scaleY, line
         context.save();
         context.translate(this.originX, this.originY);
         if (this.lineWidth) context.lineWidth = this.lineWidth;
-        if (this.strokeStyle) context.strokeStyle = this.strokeStyle;
+        if (this.color) context.strokeStyle = this.color;
+        context.lineCap = 'round';
         context.beginPath();
         for (var x = this.from; x <= this.to; x += _resolution) {
-            context.lineTo(x * (this.scaleX || 10), (-this.fn(x))*(this.scaleY || 10));
+            var result = this.fn(x);
+            context.lineTo((result.x || x) * (this.scaleX || 10), (-(result.y || result || 0))*(this.scaleY || 10));
         }
         context.stroke();
         context.restore();
