@@ -1,30 +1,35 @@
-	function getCaudalHorizontalData(reduce, limit){
-	
-	var a = -1;
-	var b = 0;
-	var c = 0
-		var d1 = [];
-		
-		if (!limit) limit = 5;
-		
-		if (reduce) {
-		  a = a - reduce;
-		}
-		
-		for (var i = 0; i <= limit; i += 0.5) {
-		var result = cuadratica(a,b,c, i)
-				
-		// limite del suelo
-		if (result >= -24) {
-		  d1.push([i, result]);
-	    }
-	
-			
-		}
-		return d1;
-	}
-	
-	
-	function cuadratica(a,b,c, x) {
-	  return a * (x*x) + b *x + c
-	}
+    var GRAVEDAD = 9.8;
+
+    /**
+     * Velocidad final
+     * @param {number} vx velocidad inicial horizontal
+     * @param {number} vy velocidad inicial vertical
+     * @param {number} ax  aceleración horizontal
+     * @param {number} ay  aceleración vertical
+     * @param {number} t tiempo
+     * @return {{x: number, y: number}}
+     */
+    function velFinal(vx, vy, ax, ay, t) {
+        return {
+            x: vx + ax * t,
+            y: vy + ay * t
+        };
+    }
+
+    /**
+     * Movimiento parabólico
+     * @param {number} x posición horizontal inicial
+     * @param {number} y posición vertical inicial
+     * @param {number} vx velocidad horizontal inicial
+     * @param {number} vy velocidad vertical inicial
+     * @param {number} ax aceleración horizontal
+     * @param {number} ay aceleración vertical
+     * @param {number} t tiempo
+     * @return {{x: number, y: number}}
+     */
+    function posFinal(x, y, vx, vy, ax, ay, t) {
+        return {
+            x: x + vx * t + .5 * ax * Math.pow(t, 2),
+            y: y + vy * t + .5 * ay * Math.pow(t, 2)
+        }
+    }
