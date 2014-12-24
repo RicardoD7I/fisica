@@ -1,0 +1,29 @@
+para calcular todo (parametros comunes):
+	entrada
+		aceleración gravedad (personalizada)
+
+para calcular el vaciado:
+	entrada
+		densidad del fluido (inferior)
+		presión
+			destapado = atm
+			tapado = depende del fluido superior
+		area del orificio
+		altura inicial (nivel)
+
+	salida
+		velocidad --> para el chorro
+		altura final --> altura inicial para el siguiente instante
+
+
+para calcular la distancia:
+	entrada
+		velocidad inicial
+		posición inicial (x,y)
+
+	salida
+		posición final (x,y) -->
+
+
+precondición
+	el pivote del tubo del tanque es ideal (sin roce, ni tamaño, ni nada)
