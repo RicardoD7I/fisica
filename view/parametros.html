@@ -1,0 +1,168 @@
+<div class="modal" tabindex="-1" role="dialog" ng-controller="parametrosController">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="modal-title">Datos de ingreso</h4>
+            </div>
+            <div class="modal-body">
+                <form name="parametrosForm" class="form-horizontal" novalidate="novalidate" bs-collapse>
+
+                    <div class="panel" ng-form="dimensionesForm" ng-class="{'panel-primary': dimensionesForm.$valid, 'panel-danger':dimensionesForm.$invalid}">
+                        <div class="panel-heading" bs-collapse-toggle>
+                            <h3 class="panel-title">Dimensiones del tanque</h3>
+                        </div>
+                        <div class="panel-body" bs-collapse-target>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label" for="alturaTanque">Altura del tanque:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" name="alturaTanque" id="alturaTanque" ng-model="tanque.altura" ng-required="true" number-range data-min="0" data-step=".1" data-unit="m"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label" for="diametroTanque">Di&aacute;metro del tanque:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" name="diametroTanque" id="diametroTanque" ng-model="tanque.diametro" ng-required="true" number-range data-min="0" data-step=".1" data-unit="m" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Capacidad total:</label>
+                                <span class="col-sm-7 form-control-static">{{calcCapacidadTotal()}} m&sup3;</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel" ng-form="tanqueForm" ng-class="{'panel-primary': tanqueForm.$valid, 'panel-danger':tanqueForm.$invalid}">
+                        <div class="panel-heading" bs-collapse-toggle>
+                            <h3 class="panel-title">Caracter&iacute;sticas del tanque</h3>
+                        </div>
+                        <div class="panel-body" bs-collapse-target>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label" for="nivelLlenado">Nivel de llenado:</label>
+                                <div class="col-sm-7">
+                                    <div>
+                                        <input class="form-control" type="range" ng-model="tanque.nivel" ng-required="true" min="0" max="100" step=".5" name="nivelLlenado" id="nivelLlenado"/>
+                                    </div>
+                                    <div class="form-control-static">
+                                        Litros: {{calcLitrosLleno()}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Tapa:</label>
+                                <div class="col-sm-7">
+                                    <label class="radio-inline"><input type="radio" name="tapaTanque" ng-model="tanque.tapa" ng-required="true" ng-value="false"/>Sin tapa</label>
+                                    <label class="radio-inline"><input type="radio" name="tapaTanque" ng-model="tanque.tapa" ng-required="true" ng-value="true"/>Con tapa</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="tanque.tapa">
+                                <label class="col-sm-5 control-label" for="fluidoSuperior">
+                                    Fluido superior&nbsp;<i class="glyphicon glyphicon-info-sign text-info" bs-tooltip data-title="{{ 'Este fluido es el que ejercer\u00E1 la presi\u00F3n sobre el fluido a estudiar' }}" data-container="body"></i>:
+                                </label>
+                                <div class="col-sm-7">
+                                    <button type="button" class="btn btn-default" id="fluidoSuperior" ng-model="tanque.gas" ng-required="tanque.tapa" bs-select ng-options="gas as gas.nombre for gas in gases" data-placeholder="Seleccione el fluido superior">
+                                        <span class="caret"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="!tanque.tapa && tanque.gas">
+                                <label class="col-sm-5 control-label">Densidad del fluido superior:</label>
+                                <div class="col-sm-7">
+                                    <span class="form-control-static">{{tanque.gas.densidad}}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label" for="alturaPlataforma">Altura de la plataforma:</label>
+                                <div class="col-sm-7">
+                                    <input type="number" name="alturaPlataforma" id="alturaPlataforma" ng-model="tanque.alturaPlataforma" ng-required="true" number-range data-min="0" data-step=".1" data-unit="m"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel" ng-form="salidaForm" ng-class="{'panel-primary': salidaForm.$valid, 'panel-danger':salidaForm.$invalid}">
+                        <div class="panel-heading" bs-collapse-toggle>
+                            <h3 class="panel-title">Salida del tanque</h3>
+                        </div>
+                        <div class="panel-body" bs-collapse-target>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Tipo del salida:</label>
+                                <div class="col-sm-7">
+                                    <div class="radio"><label><input type="radio" name="orificioUbicacion" ng-model="tanque.orificio.ubicacion" ng-required="true" value="LATERAL"/>Tubo en pared lateral del tanque</label></div>
+                                    <div class="radio"><label><input type="radio" name="orificioUbicacion" ng-model="tanque.orificio.ubicacion" ng-required="true" value="DEBAJO"/>Orificio por debajo del tanque</label></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="tanque.orificio.ubicacion == 'LATERAL'">
+                                <label class="col-sm-5 control-label" for="orificioDiametro">Di&aacute;metro del orificio:</label>
+                                <div class="col-sm-7">
+                                    <input type="number" name="orificioDiametro" id="orificioDiametro" ng-model="tanque.orificio.diametro" ng-required="true" number-range data-min="0" data-step=".1" data-unit="cm"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="tanque.orificio.ubicacion == 'LATERAL'">
+                                <label class="col-sm-5 control-label" for="orificioAltura">Altura del orificio:</label>
+                                <div class="col-sm-7">
+                                    <input type="number" name="orificioAltura" id="orificioAltura" ng-model="tanque.orificio.altura" ng-required="true" number-range data-min="0" data-step=".1" data-unit="cm"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="tanque.orificio.ubicacion == 'LATERAL'">
+                                <label class="col-sm-5 control-label" for="orificioLargo">Largo del tubo:</label>
+                                <div class="col-sm-7">
+                                    <input type="number" name="orificioLargo" id="orificioLargo" ng-model="tanque.orificio.largo" ng-required="true" number-range data-m="0" data-step=".1" data-unit="cm"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="tanque.orificio.ubicacion == 'LATERAL'">
+                                <label class="col-sm-5 control-label" for="orificioAngulo">&Aacute;ngulo del tubo:</label>
+                                <div class="col-sm-7">
+                                    <input type="number" name="orificioAngulo" id="orificioAngulo" ng-model="tanque.orificio.angulo" ng-required="true" number-range data-min="-90" data-max="90" data-step=".1" data-unit="&deg;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel" ng-form="fluidoForm" ng-class="{'panel-primary': fluidoForm.$valid, 'panel-danger':fluidoForm.$invalid}">
+                        <div class="panel-heading" bs-collapse-toggle>
+                            <h3 class="panel-title">Caracter&iacute;sticas del fluido</h3>
+                        </div>
+                        <div class="panel-body" bs-collapse-target>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label" for="tipoFluido">Tipo de fluido:</label>
+                                <div class="col-sm-7">
+                                    <button type="button" class="btn btn-default" id="tipoFluido" ng-model="tanque.fluido" ng-required="true" bs-select ng-options="fluido as fluido.nombre for fluido in fluidos" data-placeholder="Seleccione el fluido">
+                                        <span class="caret"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="tanque.fluido">
+                                <label class="col-sm-5 control-label">Densidad del fluido:</label>
+                                <div class="col-sm-7">
+                                    <span class="form-control-static">{{tanque.fluido.densidad}}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-show="tanque.fluido">
+                                <label class="col-sm-5 control-label">Coeficiente de tensi&oacute;n superficial:</label>
+                                <div class="col-sm-7">
+                                    <span class="form-control-static">{{tanque.fluido.coeficienteTensionSuperficial}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="$hide()" ng-disabled="parametrosForm.$invalid">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>

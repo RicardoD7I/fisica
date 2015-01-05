@@ -6,17 +6,7 @@
 
 [nacho] agregar funciones fisicas como funciones js
 
-[maxi] armar controllers de captura de datos
-
-[maxi] armar controllers de animación
-
-[maxi] armar controllers de reporte
-
-[maxi] separar vista captura de datos
-
-[maxi] separar vista animación
-
-[maxi] separar vista reporte
+[maxi] validaciones de captura de datos
 
 [pablo] parte escrita: modelo matemático
 
@@ -47,6 +37,17 @@
 
 [nacho] planteo de funciones físicas
 
+[maxi] armar controllers de captura de datos
+
+[maxi] armar controllers de animación
+
+[maxi] armar controllers de reporte
+
+[maxi] separar vista captura de datos
+
+[maxi] separar vista animación
+
+[maxi] separar vista reporte
 
 --- HECHO: --------------------------------------------------------------------
 

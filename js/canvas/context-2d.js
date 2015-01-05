@@ -58,6 +58,18 @@ function Canvas2d(canvas) {
         });
     };
 
+    /**
+     * Sets the internal render size.
+     * @param {number} width
+     * @param {number} height
+     */
+    Canvas2d.prototype.setRenderSize = function (width, height) {
+        var scaleX = canvas.width / width,
+            scaleY = canvas.height / height;
+
+        _context.scale(scaleX, scaleY);
+    };
+
     return new Canvas2d();
 }
 

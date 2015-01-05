@@ -1,7 +1,7 @@
 [
   {
-    'nombre': 'Agua',
-    'densidad': 1,
-    'coeficienteTensionSuperficial': 72.75
+    "nombre": "Agua",
+    "densidad": 1,
+    "coeficienteTensionSuperficial": 72.75
   }
 ]

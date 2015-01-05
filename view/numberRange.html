@@ -1,0 +1,13 @@
+<div class="input-group">
+    <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="dec()">
+            <i class="glyphicon glyphicon-minus"></i></button>
+    </span>
+    <input class="form-control text-right" type="text" name="{{elemName}}" id="{{elemId}}" ng-model="model" ng-required="isRequired"/>
+    <span class="input-group-addon" ng-if="unit">{{unit}}</span>
+    <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="inc()">
+            <i class="glyphicon glyphicon-plus"></i>
+        </button>
+    </span>
+</div>

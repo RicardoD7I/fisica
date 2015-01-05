@@ -1,99 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-	<title>Final de Fisica I - UCALP</title>
 
-    <!-- Bootstrap -->
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css">
+    <title>Final de Fisica I - UCALP</title>
 
-	<!-- Estilos -->
-	<link href="css/examples.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap-additions/dist/bootstrap-additions.min.css"/>
+    <link rel="stylesheet" href="bower_components/angular-motion/dist/angular-motion.min.css"/>
 
+    <link rel="stylesheet" href="css/app.css"/>
+</head>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-	
-  </head>
-  <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
+<body ng-app="simulador" ng-controller="homeController">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-		  
-           <img src="img/logo.png" style="width:50px; display:inline"/> <span style="color:white; font-size:18px" >Fisica 1 - Simulacion fluidos</span>
-		 
+            <img class="pull-left" src="img/logo.png" style="height: 50px;">
+            <span class="navbar-brand">
+                &nbsp;
+                <span class="hidden-xs">Fisica 1 - </span>
+                Simulaci&oacute;n fluidos
+            </span>
+            <button type="button" class="navbar-toggle" bs-aside="aside" data-placement="right" data-container="body" data-template="view/navbar/aside.html">
+                <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
         </div>
-        <div id="navbar" class="collapse navbar-collapse" style="float:right">
-          <ul class="nav navbar-nav">
-            <li class="active" style="padding-top:10px;padding-right:30px;">		
-			   <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
-		        Parametros
-		       </button>
-			 </li>
-            <li>
-			  <button id="simular" type="button" class="btn btn-primary btn-lg">
-		        Simular
-		      </button>
-		    </li>
-        
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+        <div class="hidden-xs pull-right" ng-include="'view/navbar/actions.html'"></div>
+    </div>
+</nav>
 
-    <div class="container" style="margin-top:70px;margin-left:20%">
+<div class="container after-nav">
+    <canvas class="simulador" width="800" height="600" context2d data-init-callback="initCallback" data-elements="elements"></canvas>
+</div>
 
-		<canvas width="800" height="600" style="border: solid 1px #000000;">
+<footer class="clearfix">
+    <div class="container">
+        <p class="text-muted"><b>Integrantes:</b> Maximiliano Stranich, Ignacio Diaz Maurino, Ricardo Daniel Vella</p>
+    </div>
+</footer>
 
-		</canvas>
+<!-- Librerías de terceros -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
+<script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+<script src="bower_components/mathjs/dist/math.min.js"></script>
 
-    </div><!-- /.container -->
-	
+<!-- Librerías propias -->
+<script src="js/canvas/context-2d.js" type="text/javascript"></script>
+<script src="js/canvas/rectangle.js" type="text/javascript"></script>
+<script src="js/canvas/styled-text.js" type="text/javascript"></script>
+<script src="js/canvas/math-function.js" type="text/javascript"></script>
+<script src="js/calculos.js" type="text/javascript"></script>
 
-	
-	<footer class="footer">
-      <div class="container">
-        <p class="text-muted"><b>Integrantes:</b> Maximiliano Stranich,  Ignacio Diaz Maurino, Ricardo Daniel Vella</p>
-      </div>
-    </footer>
+<!-- Código de la aplicación  -->
+<script src="js/simulador.app.js"></script>
+<script src="js/simulador.directives.js"></script>
+<script src="js/simulador.factories.js"></script>
+<script src="js/simulador.controllers.home.js"></script>
+<script src="js/simulador.controllers.parametros.js"></script>
 
-   
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-	
-	<!-- Librerias -->
-	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/lib/excanvas.min.js"></script><![endif]-->
-	<script language="javascript" type="text/javascript" src="js/lib/jquery.bootstrap-touchspin.js"></script>
-
-	
-	
-	<!-- Codigo de la aplicacion -->
-	<script language="javascript" type="text/javascript" src="js/calculos.js"></script>
-	<script src="js/canvas/context-2d.js"></script>
-	<script src="js/canvas/rectangle.js"></script>
-	<script src="js/canvas/styled-text.js"></script>
-	<script src="js/canvas/math-function.js"></script>
-	
-	<!-- Inicializacion  -->	
-	<script src="js/aplicacion.js"></script>
-	<script src="js/modal.js"></script>	
-	
-  </body>
+</body>
 </html>
