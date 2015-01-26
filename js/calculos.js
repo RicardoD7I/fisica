@@ -13,7 +13,7 @@
          Datos Liquido
          */
         densidadLiquido: 0,
-        alturaInicial: 0,
+        alturaInicial: 0, //alturaInicial se refiere a la altura del liquido desde el fondo del tanque hasta el pelo de agua.
         presion: 0,
 
         /*
@@ -64,22 +64,6 @@
         }
     }
 
-    /*
-     * Calculamos la velocidad de salida del orificio
-     *
-     * Calculamos el caudal
-     *
-     * Ya sabiendo sacamos: Volumen de liquido que se reduce para la proxima ejecucion y calculamos las nuevas alturas para la proxima ejecucion
-     *
-     * */
-    function calculosTanque(valoresCalculo) {
-    	//var altura = valoresEntrada.alturaInicial;
-    	//var velocidad = valoresEntrada.velocidad;
-
-        //valoresCalculo.velocidad =
-
-    }
-
     function velocidadSalidaTanqueConTapa(valoresCalculo){
 
         var calculoPresionGas = math.compile("densidadGas * gravedad * alturaGas");
@@ -94,7 +78,12 @@
         var calculoCaudal = math.compile("areaOrificio * velocidad");
         var caudal = calculoCaudal.eval(valoresCalculo).toNumber();
 
-        var volumenARestar = caudal / 60;
+        valoresCalculo.alturaInicial = calcularAltura({
+            altura: valoresCalculo.alturaInicial,
+            baseTanque: valoresCalculo.areaBaseTanque,
+            caudal: caudal
+        }).toNumber();
+
 
     }
 
@@ -102,5 +91,14 @@
 
         var calcularVelocidad = math.compile("sqrt( 2 *  gravedad * alturaInicial)");
         valoresCalculo.velocidad = calcularVelocidad.eval(valoresCalculo).toNumber();
+
+        var calculoCaudal = math.compile("areaOrificio * velocidad");
+        var caudal = calculoCaudal.eval(valoresCalculo).toNumber();
+
+        valoresCalculo.alturaInicial = calcularAltura({
+            altura: valoresCalculo.alturaInicial,
+            baseTanque: valoresCalculo.areaBaseTanque,
+            caudal: caudal
+        }).toNumber();
 
     }
