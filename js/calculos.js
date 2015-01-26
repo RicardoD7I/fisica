@@ -64,7 +64,7 @@
         }
     }
 
-    function velocidadSalidaTanqueConTapa(valoresCalculo){
+    function calculaEstadoTanqueConTapa(valoresCalculo){
 
         var calculoPresionGas = math.compile("densidadGas * gravedad * alturaGas");
         valoresCalculo.presionGas = calculoPresionGas.eval(valoresCalculo).toNumber();
@@ -78,16 +78,16 @@
         var calculoCaudal = math.compile("areaOrificio * velocidad");
         var caudal = calculoCaudal.eval(valoresCalculo).toNumber();
 
+        var calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) * altura / (altura * baseTanque)");
         valoresCalculo.alturaInicial = calcularAltura({
             altura: valoresCalculo.alturaInicial,
             baseTanque: valoresCalculo.areaBaseTanque,
             caudal: caudal
         }).toNumber();
 
-
     }
 
-    function velocidadSalidaTanqueSinTapa(valoresCalculo){
+    function calculaEstadoTanqueSinTapa(valoresCalculo){
 
         var calcularVelocidad = math.compile("sqrt( 2 *  gravedad * alturaInicial)");
         valoresCalculo.velocidad = calcularVelocidad.eval(valoresCalculo).toNumber();
@@ -95,6 +95,7 @@
         var calculoCaudal = math.compile("areaOrificio * velocidad");
         var caudal = calculoCaudal.eval(valoresCalculo).toNumber();
 
+        var calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) * altura / (altura * baseTanque)");
         valoresCalculo.alturaInicial = calcularAltura({
             altura: valoresCalculo.alturaInicial,
             baseTanque: valoresCalculo.areaBaseTanque,
