@@ -39,13 +39,14 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
             new Rectangle(0, 237, 240, 363, 'transparent', 'img/tanque.png'),
             new StyledText("Simulador", 10, 10, "bold large sans-serif", 'red', 'left', 'top'),
             agua,
-            info,
-            mathFn
+            info//,
+             /*mathFn,*/
         ];
 
         gases().success(function (response) {
             $scope.gases = response;
         });
+
         fluidos().success(function (response) {
             $scope.fluidos = response;
             if (!$scope.tanque.fluido) {
@@ -56,18 +57,21 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
 
     /* ACCIONES */
     function update () {
-        agua.y += 1 / 3;
-        agua.height = 360 - agua.y;
         if (agua.y >= 360) {
-            agua.y = 260;
+            //working = false;
+        } else {
+            agua.y += 1 / 3;
+            agua.height = 360 - agua.y;
+            canvas.elements.push(new Gota(0, 580, 185
+                , 220, 0, 30, agua.height, -GRAVEDAD * 10));
         }
-
+/*
         mathFn.to++;
         if (mathFn.to == 300) {
             mathFn.to = 0;
             working = false;
         }
-
+*/
         info.text = "Tiempo: " + Math.floor(mathFn.to / 60).toString() + " seg";
 
         if (working) {
