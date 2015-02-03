@@ -3,7 +3,7 @@
         <button class="btn btn-default" type="button" ng-click="dec()">
             <i class="glyphicon glyphicon-minus"></i></button>
     </span>
-    <input class="form-control text-right" type="text" name="{{elemName}}" id="{{elemId}}" ng-model="model" ng-required="isRequired"/>
+    <input class="form-control text-right" type="number" name="{{elemName}}" id="{{elemId}}" ng-model="model" min="{{min}}" max="{{max}}" step="{{step}}" ng-required="isRequired"/>
     <span class="input-group-addon" ng-if="unit">{{unit}}</span>
     <span class="input-group-btn">
         <button class="btn btn-default" type="button" ng-click="inc()">
