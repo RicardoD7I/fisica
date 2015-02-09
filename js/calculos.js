@@ -78,13 +78,15 @@
         var calculoCaudal = math.compile("areaOrificio * velocidadSalida");
         var caudal = calculoCaudal.eval(valoresCalculo);
 
-        var calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) * altura / (altura * baseTanque)");
+        var calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) / baseTanque");
         valoresCalculo.alturaInicial = calcularAltura({
             altura: valoresCalculo.alturaInicial,
             baseTanque: valoresCalculo.areaBaseTanque,
             caudal: caudal
         });
 
+        var prevenirNegativos = math.compile("v < 0 ? 0 : v");
+        valoresCalculo.alturaInicial = prevenirNegativos.eval({v: valoresCalculo.alturaInicial});
     }
 
     function calculaEstadoTanqueSinTapa(valoresCalculo){
@@ -95,11 +97,13 @@
         var calculoCaudal = math.compile("(areaOrificio * velocidadSalida)");
         var caudal = calculoCaudal.eval(valoresCalculo);
 
-        var calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) * altura / (altura * baseTanque)");
+        var calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) / baseTanque");
         valoresCalculo.alturaInicial = calcularAltura.eval({
             altura: valoresCalculo.alturaInicial,
             baseTanque: valoresCalculo.areaBaseTanque,
             caudal: caudal
         });
 
+        var prevenirNegativos = math.compile("v < 0 ? 0 : v");
+        valoresCalculo.alturaInicial = prevenirNegativos.eval({v: valoresCalculo.alturaInicial});
     }

@@ -7,8 +7,7 @@
 /* ### CONTROLADOR DEL MODAL DE PARAMETROS DE ENTRADA ### */
 angular.module('simulador').controller('parametrosController', ['$scope', function ($scope) {
     var volumen = math.compile("h * ( ( d / 2 ) ^ 2 ) * PI"),
-        litros = math.compile("(v * n / 100) m3 to l"),
-        m3toL = math.compile("volumen m3 to l");
+        litros = math.compile("(v * n / 100) m3 to l");
 
     var calcCapacidadTotal = $scope.calcCapacidadTotal = function () {
         /* En m3 */

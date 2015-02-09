@@ -69,7 +69,7 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
         //agua.height = (valoresCalculo.alturaInicial.toNumber() / $scope.tanque.altura) * ALTURA_TANQUE_PX;
         agua.height = math.number(calculoAltura.eval({
             alturaFluido: valoresCalculo.alturaInicial,
-            alturaTanque: parseFloat($scope.tanque.altura),
+            alturaTanque: $scope.tanque.altura,
             pixeles: ALTURA_TANQUE_PX
         }));
         agua.y = POS_PELO_AGUA_PX + (ALTURA_TANQUE_PX - agua.height);
@@ -82,8 +82,8 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
         if (!(agua.y >= POS_PELO_AGUA_PX + ALTURA_TANQUE_PX)) {
             canvas.elements.push(
                 new Gota(0, 580, 185, 220,
-                    parseFloat($scope.tanque.orificio.largo),
-                    parseFloat($scope.tanque.orificio.angulo),
+                    math.number($scope.tanque.orificio.largo),
+                    math.number($scope.tanque.orificio.angulo),
                     math.number(valoresCalculo.velocidadSalida),
                     -GRAVEDAD));
         }
