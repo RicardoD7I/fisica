@@ -26,12 +26,12 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
     /* INICIALIZACIÓN */
     function init() {
         $scope.tanque = {
-            altura: 0,
-            diametro: 0,
-            nivel: 50, // porcentaje: 0 a 100
+            altura: 5,
+            diametro: 1,
+            nivel: 70, // porcentaje: 0 a 100
             tapa: false,
             gas: null,
-            alturaPlataforma: 0,
+            alturaPlataforma: 10,
             orificio: {
                 ubicacion: 'LATERAL',
                 diametro: 0,
