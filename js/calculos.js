@@ -79,7 +79,7 @@
         var caudal = calculoCaudal.eval(valoresCalculo);
 
         var calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) / baseTanque");
-        valoresCalculo.alturaInicial = calcularAltura({
+        valoresCalculo.alturaInicial = calcularAltura.eval({
             altura: valoresCalculo.alturaInicial,
             baseTanque: valoresCalculo.areaBaseTanque,
             caudal: caudal

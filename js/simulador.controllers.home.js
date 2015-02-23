@@ -20,15 +20,18 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
 
     var area = math.compile("( ( d / 2 ) ^ 2 ) * PI");
 
+    var tanqueImg = null;
+
     var valoresCalculo = {},
         fnCalculador = function () {};
 
     /* INICIALIZACIÓN */
     function init() {
+
         $scope.tanque = {
-            altura: 5,
+            altura: 1,
             diametro: 1,
-            nivel: 70, // porcentaje: 0 a 100
+            nivel: 50, // porcentaje: 0 a 100
             tapa: false,
             gas: null,
             alturaPlataforma: 10,
@@ -42,9 +45,11 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
             fluido: null
         };
 
+        tanqueImg = new Rectangle(0, 237, 240, 363, 'transparent', 'img/tanque.png')
+
         $scope.elements = [
             new Rectangle(0, 0, 800, 600, 'white', 'img/fondo2.png'),
-            new Rectangle(0, 237, 240, 363, 'transparent', 'img/tanque.png'),
+            tanqueImg,
             new StyledText("Simulador", 10, 10, "bold large sans-serif", 'red', 'left', 'top'),
             agua,
             info//,
@@ -61,6 +66,12 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
                 $scope.tanque.fluido = $scope.fluidos[0];
             }
         });
+
+        $scope.$watch('tanque.tapa', function(newVal, oldVal) { 
+            tanqueImg.image.src =  newVal ? "img/tanque_abierto.png" : "img/tanque.png"
+        }, true);
+
+
     }
 
     /* ACCIONES */
@@ -88,7 +99,6 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
                     -GRAVEDAD));
         }
 
-        //info.text = "Tiempo: " + Math.floor(mathFn.to / 60).toString() + " seg";
 
         if (working) {
             canvas.frame(update);
@@ -99,8 +109,23 @@ angular.module('simulador').controller('homeController', ['$scope', 'gases', 'fl
         canvas = canvas2d;
     };
 
+
     $scope.startSimulation = function () {
         working = true;
+
+        var seconds = 0;
+    
+        var updateTimer = function() {
+            setTimeout(function(){ 
+                info.text = "Tiempo: " + seconds.toString() + " seg";    
+                seconds++;
+                if (working) {
+                    updateTimer()    
+                }
+            }, 1000);
+        }
+    
+        updateTimer();
 
         console.info($scope.tanque);
 
