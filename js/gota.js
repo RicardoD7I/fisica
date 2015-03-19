@@ -25,6 +25,41 @@ function Gota(origenX, origenY, xInicial, yInicial, longitudTubo, anguloTubo, ve
         velX = velocidadInicial * Math.cos(anguloTubo * (Math.PI / 180)),
         velY = velocidadInicial * Math.sin(anguloTubo * (Math.PI / 180));
 
+    /**
+     * Movimiento parabólico
+     * @private
+     * @param {number} x posición horizontal inicial
+     * @param {number} y posición vertical inicial
+     * @param {number} vx velocidad horizontal inicial
+     * @param {number} vy velocidad vertical inicial
+     * @param {number} ax aceleración horizontal
+     * @param {number} ay aceleración vertical
+     * @param {number} t tiempo
+     * @return {{x: number, y: number}}
+     */
+    function _posFinal(x, y, vx, vy, ax, ay, t) {
+        return {
+            x: x + vx * t + .5 * ax * Math.pow(t, 2),
+            y: y + vy * t + .5 * ay * Math.pow(t, 2)
+        }
+    }
+
+    /**
+     * Velocidad final
+     * @private
+     * @param {number} vx velocidad inicial horizontal
+     * @param {number} vy velocidad inicial vertical
+     * @param {number} ax  aceleración horizontal
+     * @param {number} ay  aceleración vertical
+     * @param {number} t tiempo
+     * @return {{x: number, y: number}}
+     */
+    function _velFinal(vx, vy, ax, ay, t) {
+        return {
+            x: vx + ax * t,
+            y: vy + ay * t
+        };
+    }
 
     /**
      * @class Gota
@@ -45,8 +80,8 @@ function Gota(origenX, origenY, xInicial, yInicial, longitudTubo, anguloTubo, ve
      */
     Gota.prototype.paint = function (context) {
         if (x > 0 && y > 0) {
-            var nuevaPos = posFinal(x, y, velX, velY, 0, (recta > 0) ? 0 : gravedad, 1 / 60);
-            var nuevaVel = velFinal(velX, velY, 0, gravedad, 1 / 60);
+            var nuevaPos = _posFinal(x, y, velX, velY, 0, (recta > 0) ? 0 : gravedad, 1 / 60);
+            var nuevaVel = _velFinal(velX, velY, 0, gravedad, 1 / 60);
             x = nuevaPos.x;
             y = nuevaPos.y;
             velX = nuevaVel.x;
