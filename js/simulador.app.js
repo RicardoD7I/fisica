@@ -3,8 +3,10 @@
  */
 "use strict";
 
-angular.module('simulador', ['ngAnimate', 'mgcrea.ngStrap']);
-
-angular.module('simulador').config([function () {
-    mathjs.config({ number: 'bignumber' });
-}]);
+angular.module('simulador', ['ngAnimate', 'mgcrea.ngStrap'])
+    .constant('GRAVEDAD', 9.8)
+    .config([
+        function () {
+            mathjs.config({number: 'bignumber'});
+        }
+    ]);
