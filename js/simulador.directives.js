@@ -41,17 +41,6 @@ angular.module('simulador').directive('context2d', [function () {
         link: function (scope, element, attrs) {
             if (element[0].tagName == 'CANVAS') {
                 var canvas2d = new Canvas2d(element[0]);
-                if (attrs.background) {
-                  var context = element[0].getContext('2d');
-                  var imageObj = new Image();
-
-                  imageObj.onload = function() {
-                    context.drawImage(imageObj, 0, 0);
-                  };
-
-                  imageObj.src = attrs.background;          
-                }
-
 
                 if (angular.isArray(scope.elements)) {
                     canvas2d.elements = scope.elements;

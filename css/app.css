@@ -3,7 +3,7 @@
 }
 
 canvas.simulador {
-    background: lightgrey;
+    background: url("../img/fondo2.png") no-repeat scroll 50% 50% / 100% auto rgba(0, 0, 0, 0);
     width: 100%;
 }
 
