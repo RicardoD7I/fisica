@@ -65,7 +65,7 @@ angular.module('simulador').controller('homeController', [
         }
 
         $scope.$watch('tanque.tapa', function(newVal, oldVal) {
-            tanqueImg.image.src =  newVal ? "img/tanque_abierto.png" : "img/tanque.png"
+            tanqueImg.image.src =  newVal ? "img/tanque.png" : "img/tanque_abierto.png";
         }, true);
 
         /* ACCIONES */
@@ -137,7 +137,6 @@ angular.module('simulador').controller('homeController', [
 
                 /*Salida*/
                 velocidadSalida: math.bignumber(0)
-
             };
 
             updateAgua(valoresCalculo);
