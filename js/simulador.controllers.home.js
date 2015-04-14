@@ -2,51 +2,86 @@
 
 /* ### CONTROLADOR DE INICIAL ### */
 angular.module('simulador').controller('homeController', [
-    '$scope', 'math', 'gases', 'fluidos', 'calculos', 'GRAVEDAD',
-    function ($scope, math, gases, fluidos, calculos, GRAVEDAD) {
-        var ALTURA_TANQUE_PX = 100, // 100px de altura máxima
-            POS_PELO_AGUA_PX = 260;
+    '$scope', '$q', 'math', 'gases', 'fluidos', 'calculos', 'GRAVEDAD', 'GotaFactory', 'CanvasContextService', 'CanvasUtils', 'CanvasRectFactory', 'CanvasCircleFactory', 'CanvasImageFactory', 'CanvasSVGFactory', 'CanvasTextFactory',
+    function ($scope, $q, math, gases, fluidos, calculos, GRAVEDAD, GotaFactory, CanvasContextService, CanvasUtils, CanvasRectFactory, CanvasCircleFactory, CanvasImageFactory, CanvasSVGFactory, CanvasTextFactory) {
+        var ALTURA_TANQUE_PX = 200, // 200px de altura máxima
+            POS_PELO_AGUA_PX = 140;
 
-        var canvas = null,
+        var canvasWrapper = null,
             working = false;
 
         /* Elementos dinámicos del canvas */
-        var agua = new Rectangle(55, POS_PELO_AGUA_PX, 130, ALTURA_TANQUE_PX, 'rgba(0, 0, 255, .5'),
-            info = new StyledText("", 790, 10, "bold large sans-serif", 'red', 'right', 'top');
+        var base = CanvasSVGFactory({
+                x: 150,
+                y: 416,
+                height: 368,
+                width: 200
+            }),
+            tanque = CanvasSVGFactory({
+                x: 150,
+                y: 140,
+                height: 200,
+                width: 200
+            }),
+            tapa = CanvasSVGFactory({
+                x: 150,
+                y: 35,
+                height: 10,
+                width: 200
+            }),
+            agua = CanvasRectFactory({
+                x: 150,
+                y: POS_PELO_AGUA_PX,
+                width: 200,
+                height: ALTURA_TANQUE_PX,
+                fillStyle: 'rgba(0, 0, 255, .5)'
+            }),
+            info = CanvasTextFactory({
+                text: '',
+                x: 790,
+                y: 10,
+                font: "bold large sans-serif",
+                fillStyle: 'red',
+                align: 'right',
+                baseline: 'top'
+            });
 
-        var tanqueImg = null;
+        var images = {
+            base: CanvasUtils.loadImageURL('img/base.svg'),
+            tanque: CanvasUtils.loadImageURL('img/tanque.svg'),
+            tapa: CanvasUtils.loadImageURL('img/tapa.svg')
+        };
 
         var valoresCalculo = {},
             fnCalculador = function () {};
 
+        $scope.tanque = {
+            altura: 1,
+            diametro: 1,
+            nivel: 50, // porcentaje: 0 a 100
+            tapa: false,
+            gas: null,
+            alturaPlataforma: 10,
+            orificio: {
+                ubicacion: 'LATERAL',
+                diametro: 0,
+                altura: 0,
+                largo: 0,
+                angulo: 0
+            },
+            fluido: null
+        };
+
         /* INICIALIZACIÓN */
         function init() {
+            $q.all(images).then(function (loadedImages) {
+                base.image = loadedImages.base;
+                tanque.image = loadedImages.tanque;
 
-            $scope.tanque = {
-                altura: 1,
-                diametro: 1,
-                nivel: 50, // porcentaje: 0 a 100
-                tapa: false,
-                gas: null,
-                alturaPlataforma: 10,
-                orificio: {
-                    ubicacion: 'LATERAL',
-                    diametro: 0,
-                    altura: 0,
-                    largo: 0,
-                    angulo: 0
-                },
-                fluido: null
-            };
-
-            tanqueImg = new Rectangle(0, 237, 240, 363, 'transparent', 'img/tanque.png');
-
-            $scope.elements = [
-                tanqueImg,
-                new StyledText("Simulador", 10, 10, "bold large sans-serif", 'red', 'left', 'top'),
-                agua,
-                info
-            ];
+                $scope.$watch('tanque.tapa', function(newVal, oldVal) {
+                    tapa.image =  newVal ? loadedImages.tapa : null;
+                }, true);
+            });
 
             gases().success(function (response) {
                 $scope.gases = response;
@@ -60,9 +95,19 @@ angular.module('simulador').controller('homeController', [
             });
         }
 
-        $scope.$watch('tanque.tapa', function(newVal, oldVal) {
-            tanqueImg.image.src =  newVal ? "img/tanque.png" : "img/tanque_abierto.png";
-        }, true);
+        CanvasContextService.getInstance('canvasSimulador').then(function (contextWrapper) {
+            canvasWrapper = contextWrapper;
+
+            contextWrapper.addElements([
+                base,
+                tanque,
+                tapa,
+                agua,
+                info
+            ]);
+
+
+        });
 
         /* ACCIONES */
         function updateAgua (valoresCalculo) {
@@ -79,23 +124,19 @@ angular.module('simulador').controller('homeController', [
             updateAgua(valoresCalculo);
 
             if (!(agua.y >= POS_PELO_AGUA_PX + ALTURA_TANQUE_PX)) {
-                canvas.elements.push(
-                    new Gota(0, 580, 185, 220,
-                        math.number($scope.tanque.orificio.largo),
-                        math.number($scope.tanque.orificio.angulo),
-                        math.number(valoresCalculo.velocidadSalida),
-                        -GRAVEDAD));
+                canvasWrapper.addElements(GotaFactory(
+                    0, 580, 185, 220,
+                    math.number($scope.tanque.orificio.largo),
+                    math.number($scope.tanque.orificio.angulo),
+                    math.number(valoresCalculo.velocidadSalida),
+                    -GRAVEDAD
+                ));
             }
 
             if (working) {
-                canvas.frame(update);
+                canvasWrapper.frame(update);
             }
         }
-
-        $scope.initCallback = function (canvas2d) {
-            canvas = canvas2d;
-        };
-
 
         $scope.startSimulation = function () {
             working = true;
@@ -139,7 +180,7 @@ angular.module('simulador').controller('homeController', [
 
             fnCalculador = $scope.tanque.tapa ?  calculos.estadoTanque.conTapa : calculos.estadoTanque.sinTapa;
 
-            canvas.frame(update);
+            canvasWrapper.frame(update);
         };
 
         init();
