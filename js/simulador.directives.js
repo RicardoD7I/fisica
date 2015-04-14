@@ -1,11 +1,8 @@
-/**
- * Created by Maximiliano on 03/01/2015.
- */
 "use strict";
 
 angular.module('simulador').directive('numberRange', [
-    '$interval',
-    function ($interval) {
+    '$interval', 'math',
+    function ($interval, math) {
         return {
             restrict: 'A',
             replace: true,

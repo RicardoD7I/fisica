@@ -1,6 +1,3 @@
-/**
- * Created by Maximiliano on 04/01/2015.
- */
 "use strict";
 
 angular.module('simulador').factory('gases', ['$http', function($http) {

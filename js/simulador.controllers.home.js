@@ -1,12 +1,9 @@
-/**
- * Created by Maximiliano on 04/01/2015.
- */
 "use strict";
 
 /* ### CONTROLADOR DE INICIAL ### */
 angular.module('simulador').controller('homeController', [
-    '$scope', 'gases', 'fluidos', 'calculos', 'GRAVEDAD',
-    function ($scope, gases, fluidos, calculos, GRAVEDAD) {
+    '$scope', 'math', 'gases', 'fluidos', 'calculos', 'GRAVEDAD',
+    function ($scope, math, gases, fluidos, calculos, GRAVEDAD) {
         var ALTURA_TANQUE_PX = 100, // 100px de altura máxima
             POS_PELO_AGUA_PX = 260;
 

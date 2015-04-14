@@ -1,7 +1,8 @@
 "use strict";
 
 angular.module('simulador').service('calculos', [
-    function () {
+    'math',
+    function (math) {
         /* ESTADO TANQUE CON O SIN TAPA */
         var _calculoCaudal = math.compile("areaOrificio * velocidadSalida");
         var _calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) / baseTanque");
