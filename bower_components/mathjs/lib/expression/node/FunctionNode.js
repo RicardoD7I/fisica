@@ -113,10 +113,19 @@ FunctionNode.prototype.toString = function() {
 
 /**
  * Get LaTeX representation
+ * @param {Object|function} callback(s)
  * @return {String} str
  */
-FunctionNode.prototype.toTex = function() {
-  return latex.toArgs(this);
+FunctionNode.prototype._toTex = function(callbacks) {
+  return latex.toArgs(this, callbacks);
+};
+
+/**
+ * Get identifier.
+ * @return {String}
+ */
+FunctionNode.prototype.getIdentifier = function () {
+  return this.type + ':' + this.name;
 };
 
 module.exports = FunctionNode;

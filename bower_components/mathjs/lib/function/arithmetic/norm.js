@@ -3,12 +3,9 @@
 module.exports = function (math) {
   var util = require('../../util/index'),
 
-    array = require('../../../lib/util/array'),
-          
     BigNumber = math.type.BigNumber,
     Complex = require('../../type/Complex'),
-    Matrix = require('../../type/Matrix'),
-    collection = require('../../type/collection'),
+    Matrix = math.type.Matrix,
 
     isNumber = util.number.isNumber,
     isBoolean = util['boolean'].isBoolean,
@@ -64,8 +61,15 @@ module.exports = function (math) {
     }
 
     if (isComplex(x)) {
-      // ignore p, complex numbers
-      return Math.sqrt(x.re * x.re + x.im * x.im);
+      // do not compute sqrt(re * re + im * im) since it will overflow with big numbers!
+      var re = Math.abs(x.re);
+      var im = Math.abs(x.im);
+      if (re >= im) {
+        var i = im / re;
+        return re * Math.sqrt(1 + i * i);
+      }
+      var j = re / im;
+      return im * Math.sqrt(1 + j * j);
     }
 
     if (x instanceof BigNumber) {
@@ -79,8 +83,13 @@ module.exports = function (math) {
     }
 
     if (isArray(x)) {
+      // use matrix optimized operations
+      return norm(math.matrix(x), p);
+    }
+    
+    if (x instanceof Matrix) {
       // size
-      var sizeX = array.size(x);
+      var sizeX = x.size();
       // missing p
       if (p == null)
         p = 2;
@@ -90,21 +99,25 @@ module.exports = function (math) {
         if (p === Number.POSITIVE_INFINITY || p === 'inf') {
           // norm(x, Infinity) = max(abs(x))
           var n;
-          math.forEach(x, function (value) {
-            var v = math.abs(value);
-            if (!n || math.larger(v, n))
-              n = v;
-          });
+          x.forEach(
+            function (value) {
+              var v = math.abs(value);
+              if (!n || math.larger(v, n))
+                n = v;
+            },
+            true);
           return n;
         }
         if (p === Number.NEGATIVE_INFINITY || p === '-inf') {
           // norm(x, -Infinity) = min(abs(x))
           var n;
-          math.forEach(x, function (value) {
-            var v = math.abs(value);
-            if (!n || math.smaller(v, n))
-              n = v;
-          });
+          x.forEach(
+            function (value) {
+              var v = math.abs(value);
+              if (!n || math.smaller(v, n))
+                n = v;
+            },
+            true);
           return n;
         }
         if (p === 'fro')
@@ -114,9 +127,11 @@ module.exports = function (math) {
           if (!math.equal(p, 0)) {
             // norm(x, p) = sum(abs(xi) ^ p) ^ 1/p
             var n = 0;
-            math.forEach(x, function (value) {
-              n = math.add(math.pow(math.abs(value), p), n);
-            });
+            x.forEach(
+              function (value) {
+                n = math.add(math.pow(math.abs(value), p), n);
+              },
+              true);
             return math.pow(n, 1 / p);
           }
           return Number.POSITIVE_INFINITY;
@@ -129,40 +144,28 @@ module.exports = function (math) {
         if (p == 1) {
           // norm(x) = the largest column sum
           var c = [];
-          // loop rows
-          for (var i = 0; i < x.length; i++) {
-            var r = x[i];
-            // loop columns
-            for (var j = 0; j < r.length; j++) {
-              c[j] = math.add(c[j] || 0, math.abs(r[j]));
-            }
-          }
+          x.forEach(
+            function (value, index) {
+              var j = index[1];
+              c[j] = math.add(c[j] || 0, math.abs(value));
+            },
+            true);
           return math.max(c);
         }
         if (p == Number.POSITIVE_INFINITY || p === 'inf') {
           // norm(x) = the largest row sum
-          var n = 0;
-          // loop rows
-          for (var i = 0; i < x.length; i++) {
-            var rs = 0;
-            var r = x[i];
-            // loop columns
-            for (var j = 0; j < r.length; j++) {
-              rs = math.add(rs, math.abs(r[j]));
-            }
-            if (math.larger(rs, n))
-              n = rs;
-          }
-          return n;
+          var r = [];
+          x.forEach(
+            function (value, index) {
+              var i = index[0];
+              r[i] = math.add(r[i] || 0, math.abs(value));
+            },
+            true);
+          return math.max(r);
         }
         if (p === 'fro') {
           // norm(x) = sqrt(sum(diag(x'x)))
-          var d = math.diag(math.multiply(math.transpose(x), x));
-          var s = 0;
-          math.forEach(d, function (value) {
-            s = math.add(value, s);
-          });
-          return math.sqrt(s);
+          return math.sqrt(x.transpose().multiply(x).trace());
         }
         if (p == 2) {
           // not implemented
@@ -171,10 +174,6 @@ module.exports = function (math) {
         // invalid parameter value
         throw new Error('Unsupported parameter value');
       }
-    }
-
-    if (x instanceof Matrix) {
-      return norm(x.valueOf(), p);
     }
 
     throw new math.error.UnsupportedTypeError('norm', x);

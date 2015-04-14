@@ -1,7 +1,5 @@
 'use strict';
 
-var Matrix = require('../../type/Matrix');
-
 /**
  * Attach a transform function to math.forEach
  * Adds a property transform containing the transform function.
@@ -10,7 +8,10 @@ var Matrix = require('../../type/Matrix');
  * @param {Object} math
  */
 module.exports = function (math) {
-  math.forEach.transform = function (x, callback) {
+
+  var Matrix = math.type.Matrix;
+
+  var transform = function (x, callback) {
     if (arguments.length != 2) {
       throw new math.error.ArgumentsError('forEach', arguments.length, 2);
     }
@@ -39,4 +40,7 @@ module.exports = function (math) {
     recurse(array, []);
   }
 
+  math.forEach.transform = transform;
+
+  return transform;
 };

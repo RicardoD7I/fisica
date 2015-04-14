@@ -1,9 +1,8 @@
 'use strict';
 
-var BigNumber = require('decimal.js');
+var BigNumber = require('../../type/BigNumber');
 var errorTransform = require('./error.transform').transform;
 var isNumber = require('../../util/number').isNumber;
-var isCollection = require('../../type/collection').isCollection;
 var argsToArray = require('../../util/array').argsToArray;
 
 /**
@@ -15,7 +14,10 @@ var argsToArray = require('../../util/array').argsToArray;
  * @param {Object} math
  */
 module.exports = function (math) {
-  math.mean.transform = function () {
+
+  var isCollection = math.collection.isCollection;
+
+  var transform = function () {
     var args = argsToArray(arguments);
 
     // change last argument dim from one-based to zero-based
@@ -36,4 +38,8 @@ module.exports = function (math) {
       throw errorTransform(err);
     }
   };
+
+  math.mean.transform = transform;
+
+  return transform;
 };

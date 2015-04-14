@@ -1,10 +1,10 @@
 'use strict';
 
 module.exports = function (math) {
-  var Matrix = require('../../type/Matrix'),
+  var Matrix = math.type.Matrix,
       Unit = require('../../type/Unit'),
       BigNumber = math.type.BigNumber,
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = require('../../util/number').isNumber,
       isCollection = collection.isCollection,
@@ -22,8 +22,8 @@ module.exports = function (math) {
    *
    * Syntax:
    *
-   *     mean.median(a, b, c, ...)
-   *     mean.median(A)
+   *     math.median(a, b, c, ...)
+   *     math.median(A)
    *
    * Examples:
    *

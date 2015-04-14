@@ -4,6 +4,7 @@ var Node = require('./Node'),
     ArrayNode = require('./ArrayNode'),
 
     keywords = require('../keywords'),
+    operators = require('../operators'),
 
     latex = require('../../util/latex'),
     isString = require('../../util/string').isString;
@@ -77,20 +78,39 @@ AssignmentNode.prototype.clone = function() {
  * @return {String}
  */
 AssignmentNode.prototype.toString = function() {
-  return this.name + ' = ' + this.expr.toString();
+  var precedence = operators.getPrecedence(this);
+  var exprPrecedence = operators.getPrecedence(this.expr);
+  var expr = this.expr.toString();
+  if ((exprPrecedence !== null) && (exprPrecedence <= precedence)) {
+    expr = '(' + expr + ')';
+  }
+  return this.name + ' = ' + expr;
 };
 
 /**
  * Get LaTeX representation
+ * @param {Object|function} callback(s)
  * @return {String}
  */
-AssignmentNode.prototype.toTex = function() {
+AssignmentNode.prototype._toTex = function(callbacks) {
+  var precedence = operators.getPrecedence(this);
+  var exprPrecedence = operators.getPrecedence(this.expr);
+
+  var expr = this.expr.toTex(callbacks);
+  if ((exprPrecedence !== null) && (exprPrecedence <= precedence)) {
+    //adds visible round brackets
+    expr = latex.addBraces(expr, true);
+  }
+  else {
+    //adds (invisible) curly braces
+    expr = latex.addBraces(expr, false);
+  }
+
   var brace;
   if (this.expr instanceof ArrayNode) {
     brace = ['\\mathbf{', '}'];
   }
-  return latex.addBraces(latex.toSymbol(this.name), brace) + '=' +
-      latex.addBraces(this.expr.toTex());
+  return latex.addBraces(latex.toSymbol(this.name), brace) + '=' + expr;
 };
 
 module.exports = AssignmentNode;

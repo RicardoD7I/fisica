@@ -6,13 +6,15 @@ module.exports = function (math) {
       BigNumber = math.type.BigNumber,
       Complex = require('../../type/Complex'),
       Unit = require('../../type/Unit'),
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = util.number.isNumber,
       isBoolean = util['boolean'].isBoolean,
       isComplex = Complex.isComplex,
       isUnit = Unit.isUnit,
-      isCollection = collection.isCollection;
+      isCollection = collection.isCollection,
+
+      bigSinh = util.bignumber.cosh_sinh_csch_sech;
 
   /**
    * Calculate the hyperbolic sine of a value,
@@ -32,8 +34,8 @@ module.exports = function (math) {
    *
    *    cosh, tanh
    *
-   * @param {Number | Boolean | Complex | Unit | Array | Matrix | null} x  Function input
-   * @return {Number | Complex | Array | Matrix} Hyperbolic sine of x
+   * @param {Number | BigNumber | Boolean | Complex | Unit | Array | Matrix | null} x  Function input
+   * @return {Number | BigNumber | Complex | Array | Matrix} Hyperbolic sine of x
    */
   math.sinh = function sinh(x) {
     if (arguments.length != 1) {
@@ -64,7 +66,8 @@ module.exports = function (math) {
     }
 
     if (isCollection(x)) {
-      return collection.deepMap(x, sinh);
+      // deep map collection, skip zeros since sinh(0) = 0
+      return collection.deepMap(x, sinh, true);
     }
 
     if (isBoolean(x) || x === null) {
@@ -72,9 +75,7 @@ module.exports = function (math) {
     }
 
     if (x instanceof BigNumber) {
-      // TODO: implement BigNumber support
-      // downgrade to Number
-      return sinh(x.toNumber());
+      return bigSinh(x, BigNumber, true, false);
     }
 
     throw new math.error.UnsupportedTypeError('sinh', math['typeof'](x));

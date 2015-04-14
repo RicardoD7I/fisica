@@ -6,13 +6,15 @@ module.exports = function (math) {
       BigNumber = math.type.BigNumber,
       Complex = require('../../type/Complex'),
       Unit = require('../../type/Unit'),
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = util.number.isNumber,
       isBoolean = util['boolean'].isBoolean,
       isComplex = Complex.isComplex,
       isUnit = Unit.isUnit,
-      isCollection = collection.isCollection;
+      isCollection = collection.isCollection,
+
+      bigSech = util.bignumber.cosh_sinh_csch_sech;
 
   /**
    * Calculate the hyperbolic secant of a value,
@@ -28,7 +30,7 @@ module.exports = function (math) {
    *
    *    // sech(x) = 1/ cosh(x)
    *    math.sech(0.5);       // returns 0.886818883970074
-   *    1 / math.cosh(0.5);   // returns 1.9190347513349437
+   *    1 / math.cosh(0.5);   // returns 0.886818883970074
    *
    * See also:
    *
@@ -71,9 +73,7 @@ module.exports = function (math) {
     }
 
     if (x instanceof BigNumber) {
-      // TODO: implement BigNumber support
-      // downgrade to Number
-      return sech(x.toNumber());
+      return bigSech(x, BigNumber, false, true);
     }
 
     throw new math.error.UnsupportedTypeError('sech', math['typeof'](x));

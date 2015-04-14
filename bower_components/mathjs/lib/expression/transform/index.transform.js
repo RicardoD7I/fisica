@@ -1,11 +1,9 @@
 'use strict';
 
-var BigNumber = require('decimal.js');
+var BigNumber = require('../../type/BigNumber');
 var Range = require('../../type/Range');
 var Index = require('../../type/Index');
-var Matrix = require('../../type/Matrix');
 var isNumber = require('../../util/number').isNumber;
-var isArray = Array.isArray;
 
 /**
  * Attach a transform function to math.index
@@ -15,7 +13,7 @@ var isArray = Array.isArray;
  * @param {Object} math
  */
 module.exports = function (math) {
-  math.index.transform = function () {
+  var transform = function () {
     var args = [];
     for (var i = 0, ii = arguments.length; i < ii; i++) {
       var arg = arguments[i];
@@ -42,4 +40,8 @@ module.exports = function (math) {
     Index.apply(res, args);
     return res;
   };
+
+  math.index.transform = transform;
+
+  return transform;
 };

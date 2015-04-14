@@ -1,12 +1,5 @@
 'use strict';
 
-var Matrix = require('../../type/Matrix');
-var BigNumber = require('decimal.js');
-var Range = require('../../type/Range');
-var Index = require('../../type/Index');
-var isNumber = require('../../util/number').isNumber;
-var isArray = Array.isArray;
-
 /**
  * Attach a transform function to math.map
  * Adds a property transform containing the transform function.
@@ -15,7 +8,10 @@ var isArray = Array.isArray;
  * @param {Object} math
  */
 module.exports = function (math) {
-  math.map.transform = function (x, callback) {
+
+  var Matrix = math.type.Matrix;
+
+  var transform = function (x, callback) {
     if (arguments.length != 2) {
       throw new math.error.ArgumentsError('map', arguments.length, 2);
     }
@@ -23,7 +19,7 @@ module.exports = function (math) {
     if (Array.isArray(x)) {
       return _mapArray(x, callback, x);
     } else if (x instanceof Matrix) {
-      return new Matrix(_mapArray(x.valueOf(), callback, x))
+      return math.matrix(_mapArray(x.valueOf(), callback, x));
     } else {
       throw new math.error.UnsupportedTypeError('map', math['typeof'](x));
     }
@@ -44,4 +40,8 @@ module.exports = function (math) {
 
     return recurse(arrayIn, []);
   }
+
+  math.map.transform = transform;
+
+  return transform;
 };

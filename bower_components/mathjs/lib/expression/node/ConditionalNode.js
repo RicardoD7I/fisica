@@ -2,10 +2,11 @@
 
 var Node = require('./Node');
 var latex = require('../../util/latex');
-var BigNumber = require('decimal.js');
+var BigNumber = require('../../type/BigNumber');
 var Complex = require('../../type/Complex');
 var Unit = require('../../type/Unit');
 var util = require('../../util');
+var operators = require('../operators');
 var isString = util.string.isString;
 var isNumber = util.number.isNumber;
 var isBoolean = util['boolean'].isBoolean;
@@ -119,23 +120,47 @@ ConditionalNode.prototype.clone = function() {
  * @return {String} str
  */
 ConditionalNode.prototype.toString = function() {
-  // TODO: not nice adding parenthesis al the time
-  return '(' + this.condition.toString() + ') ? (' +
-      this.trueExpr.toString() + ') : (' +
-      this.falseExpr.toString() + ')';
+  var precedence = operators.getPrecedence(this);
+
+  //Enclose Arguments in parentheses if they are an OperatorNode
+  //or have lower or equal precedence
+  //NOTE: enclosing all OperatorNodes in parentheses is a decision
+  //purely based on aesthetics and readability
+  var condition = this.condition.toString();
+  var conditionPrecedence = operators.getPrecedence(this.condition);
+  if ((this.condition.type === 'OperatorNode')
+      || ((conditionPrecedence !== null) && (conditionPrecedence <= precedence))) {
+    condition = '(' + condition + ')';
+  }
+
+  var trueExpr = this.trueExpr.toString();
+  var truePrecedence = operators.getPrecedence(this.trueExpr);
+  if ((this.trueExpr.type === 'OperatorNode')
+      || ((truePrecedence !== null) && (truePrecedence <= precedence))) {
+    trueExpr = '(' + trueExpr + ')';
+  }
+
+  var falseExpr = this.falseExpr.toString();
+  var falsePrecedence = operators.getPrecedence(this.falseExpr);
+  if ((this.falseExpr.type === 'OperatorNode')
+      || ((falsePrecedence !== null) && (falsePrecedence <= precedence))) {
+    falseExpr = '(' + falseExpr + ')';
+  }
+  return condition + ' ? ' + trueExpr + ' : ' + falseExpr;
 };
 
 /**
  * Get LaTeX representation
+ * @param {Object|function} callback(s)
  * @return {String} str
  */
-ConditionalNode.prototype.toTex = function() {
+ConditionalNode.prototype._toTex = function(callbacks) {
   var s = (
-      latex.addBraces(this.trueExpr.toTex()) +
+      latex.addBraces(this.trueExpr.toTex(callbacks)) +
       ', &\\quad' +
-      latex.addBraces('\\text{if}\\;' + this.condition.toTex())
+      latex.addBraces('\\text{if}\\;' + this.condition.toTex(callbacks))
       ) + '\\\\' + (
-      latex.addBraces(this.falseExpr.toTex()) +
+      latex.addBraces(this.falseExpr.toTex(callbacks)) +
       ', &\\quad' +
       latex.addBraces('\\text{otherwise}')
       );

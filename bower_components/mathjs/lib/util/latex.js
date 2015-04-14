@@ -1,7 +1,10 @@
 'use strict';
 
-var ArrayNode = require('../expression/node/ArrayNode'),
-    OperatorNode = require('../expression/node/OperatorNode');
+// FIXME: remove dependencies on Nodes
+var ArrayNode = require('../expression/node/ArrayNode');
+var OperatorNode = require('../expression/node/OperatorNode');
+var SymbolNode = require('../expression/node/SymbolNode');
+var ConstantNode = require('../expression/node/ConstantNode');
 
 // GREEK LETTERS
 var greek = {
@@ -283,7 +286,7 @@ exports.addBraces = function(s, brace, type) {
   return braces[0] + s + braces[1];
 };
 
-exports.toArgs = function(that) {
+exports.toArgs = function(that, customFunctions) {
   var name = that.name,
       args = that.args,
       func = exports.toSymbol(that.name),
@@ -351,12 +354,17 @@ exports.toArgs = function(that) {
 
     case 'permutations':
       if (args.length === 1) {
-        op = '!';
+        if (args[0] instanceof SymbolNode || args[0] instanceof ConstantNode) {
+          op = '!';
+        }
+        else {
+          return '{\\left(' + args[0].toTex(customFunctions) + '\\right)!}';
+        }
       }
       else {
         // op = 'P';
-        var n = args[0].toTex(),
-            k = args[1].toTex();
+        var n = args[0].toTex(customFunctions),
+            k = args[1].toTex(customFunctions);
         return '\\frac{' + n + '!}{\\left(' + n + ' - ' + k + '\\right)!}';
       }
       break;
@@ -377,7 +385,7 @@ exports.toArgs = function(that) {
       type = 'lr';
 
       if (args.length === 2) {
-        var tmp = args[1].toTex();
+        var tmp = args[1].toTex(customFunctions);
 
         if (tmp === '\\text{inf}') {
           tmp = '\\infty';
@@ -409,7 +417,7 @@ exports.toArgs = function(that) {
       type = 'lr';
 
       if (args.length === 2) {
-        suffix = '_' + exports.addBraces(args[1].toTex());
+        suffix = '_' + exports.addBraces(args[1].toTex(customFunctions));
         args = [args[0]];
       }
       break;
@@ -429,7 +437,7 @@ exports.toArgs = function(that) {
     case 'log':
       var base = 'e';
       if (args.length === 2) {
-        base = args[1].toTex();
+        base = args[1].toTex(customFunctions);
         func = '\\log_{' + base + '}';
         args = [args[0]];
       }
@@ -458,7 +466,11 @@ exports.toArgs = function(that) {
 
     case 'det':
       if (that.args[0] instanceof ArrayNode) {
-        return that.args[0].toTex('vmatrix');
+        //FIXME passing 'vmatrix' like that is really ugly
+        that.args[0].latexType = 'vmatrix';
+        var latex = that.args[0].toTex(customFunctions);
+        delete that.args[0].latexType;
+        return latex;
       }
 
       brace = 'vmatrix';
@@ -472,7 +484,7 @@ exports.toArgs = function(that) {
 
   if (op !== null) {
     brace = (op === '+' || op === '-');
-    texParams = (new OperatorNode(op, name, args)).toTex();
+    texParams = (new OperatorNode(op, name, args)).toTex(customFunctions);
   }
   else {
     op = ', ';
@@ -483,7 +495,7 @@ exports.toArgs = function(that) {
   }
 
   texParams = texParams || args.map(function(param) {
-    return '{' + param.toTex() + '}'  ;
+    return '{' + param.toTex(customFunctions) + '}'  ;
   }).join(op);
 
   return prefix + (showFunc ? func : '') +

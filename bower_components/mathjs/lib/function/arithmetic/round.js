@@ -5,13 +5,14 @@ module.exports = function (math) {
 
       BigNumber = math.type.BigNumber,
       Complex = require('../../type/Complex'),
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = util.number.isNumber,
       isInteger = util.number.isInteger,
       isBoolean = util['boolean'].isBoolean,
       isComplex = Complex.isComplex,
-      isCollection = collection.isCollection;
+      isCollection = collection.isCollection,
+      toFixed = util.number.toFixed;
 
   /**
    * Round a value towards the nearest integer.
@@ -128,7 +129,6 @@ module.exports = function (math) {
    * @return {Number} roundedValue
    */
   function roundNumber (value, decimals) {
-    var p = Math.pow(10, decimals);
-    return Math.round(value * p) / p;
+    return parseFloat(toFixed(value, decimals));
   }
 };

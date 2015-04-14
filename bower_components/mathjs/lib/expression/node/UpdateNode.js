@@ -40,8 +40,13 @@ UpdateNode.prototype.type = 'UpdateNode';
  * @private
  */
 UpdateNode.prototype._compile = function (defs) {
-  return 'scope["' + this.index.objectName() + '\"] = ' +
-      this.index.compileSubset(defs,  this.expr._compile(defs));
+  var lhs = (this.index.objectName() in defs.args)
+    ? this.name + ' = ' // this is a FunctionAssignment argument
+    : 'scope["' + this.index.objectName() + '\"]';
+
+  var rhs = this.index.compileSubset(defs,  this.expr._compile(defs));
+
+  return lhs + ' = ' + rhs;
 };
 
 /**
@@ -84,10 +89,11 @@ UpdateNode.prototype.toString = function() {
 
 /**
  * Get LaTeX representation
+ * @param {Object|function} callback(s)
  * @return {String}
  */
-UpdateNode.prototype.toTex = function() {
-  return this.index.toTex() + ' = ' + this.expr.toTex();
+UpdateNode.prototype._toTex = function(callbacks) {
+  return this.index.toTex(callbacks) + ' = ' + this.expr.toTex(callbacks);
 };
 
 module.exports = UpdateNode;

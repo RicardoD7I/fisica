@@ -5,12 +5,14 @@ module.exports = function (math) {
 
       BigNumber = math.type.BigNumber,
       Complex = require('../../type/Complex'),
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = util.number.isNumber,
       isBoolean = util['boolean'].isBoolean,
       isComplex = Complex.isComplex,
-      isCollection = collection.isCollection;
+      isCollection = collection.isCollection,
+
+      bigArcTan = util.bignumber.arctan_arccot;
 
   /**
    * Calculate the inverse tangent of a value.
@@ -32,8 +34,8 @@ module.exports = function (math) {
    *
    *    tan, asin, acos
    *
-   * @param {Number | Boolean | Complex | Array | Matrix | null} x   Function input
-   * @return {Number | Complex | Array | Matrix} The arc tangent of x
+   * @param {Number | BigNumber | Boolean | Complex | Array | Matrix | null} x   Function input
+   * @return {Number | BigNumber | Complex | Array | Matrix} The arc tangent of x
    */
   math.atan = function atan(x) {
     if (arguments.length != 1) {
@@ -45,6 +47,15 @@ module.exports = function (math) {
     }
 
     if (isComplex(x)) {
+      if (x.re == 0) {
+        if (x.im == 1) {
+          return new Complex(0, Infinity);
+        }
+        if (x.im == -1) {
+          return new Complex(0, -Infinity);
+        }
+      }
+
       // atan(z) = 1/2 * i * (ln(1-iz) - ln(1+iz))
       var re = x.re;
       var im = x.im;
@@ -63,7 +74,8 @@ module.exports = function (math) {
     }
 
     if (isCollection(x)) {
-      return collection.deepMap(x, atan);
+      // deep map collection, skip zeros since atan(0) = 0
+      return collection.deepMap(x, atan, true);
     }
 
     if (isBoolean(x) || x === null) {
@@ -71,9 +83,7 @@ module.exports = function (math) {
     }
 
     if (x instanceof BigNumber) {
-      // TODO: implement BigNumber support
-      // downgrade to Number
-      return atan(x.toNumber());
+      return bigArcTan(x, BigNumber, false);
     }
 
     throw new math.error.UnsupportedTypeError('atan', math['typeof'](x));

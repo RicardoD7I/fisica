@@ -3,6 +3,7 @@
 var Node = require('./Node');
 var keywords = require('../keywords');
 var latex = require('../../util/latex');
+var operators = require('../operators');
 var isString = require('../../util/string').isString;
 var isArray = Array.isArray;
 
@@ -44,23 +45,24 @@ FunctionAssignmentNode.prototype.type = 'FunctionAssignmentNode';
  * @private
  */
 FunctionAssignmentNode.prototype._compile = function (defs) {
+  // add the function arguments to defs (used by SymbolNode and UpdateNode)
+  this.params.forEach(function (variable) {
+    defs.args[variable] = true;
+  });
+
   return 'scope["' + this.name + '"] = ' +
-      '  (function (scope) {' +
-      '    scope = Object.create(scope); ' +
+      '  (function () {' +
       '    var fn = function ' + this.name + '(' + this.params.join(',') + ') {' +
       '      if (arguments.length != ' + this.params.length + ') {' +
-      // TODO: use util.error.ArgumentsError here
+      // TODO: use util.error.ArgumentsError here?
       // TODO: test arguments error
       '        throw new SyntaxError("Wrong number of arguments in function ' + this.name + ' (" + arguments.length + " provided, ' + this.params.length + ' expected)");' +
       '      }' +
-      this.params.map(function (variable, index) {
-        return 'scope["' + variable + '"] = arguments[' + index + '];';
-      }).join('') +
       '      return ' + this.expr._compile(defs) + '' +
       '    };' +
       '    fn.syntax = "' + this.name + '(' + this.params.join(', ') + ')";' +
       '    return fn;' +
-      '  })(scope);';
+      '  })();';
 };
 
 /**
@@ -96,19 +98,39 @@ FunctionAssignmentNode.prototype.clone = function() {
  * @return {String} str
  */
 FunctionAssignmentNode.prototype.toString = function() {
+  var precedence = operators.getPrecedence(this);
+  var exprPrecedence = operators.getPrecedence(this.expr);
+
+  var expr = this.expr.toString();
+  if ((exprPrecedence !== null) && (exprPrecedence <= precedence)) {
+    expr = '(' + expr + ')';
+  }
   return 'function ' + this.name +
-      '(' + this.params.join(', ') + ') = ' +
-      this.expr.toString();
+      '(' + this.params.join(', ') + ') = ' + expr;
 };
 
 /**
  * get LaTeX representation
+ * @param {Object|function} callback(s)
  * @return {String} str
  */
-FunctionAssignmentNode.prototype.toTex = function() {
-  return this.name +
-      latex.addBraces(this.params.map(latex.toSymbol).join(', '), true) + '=' +
-      latex.addBraces(this.expr.toTex());
+FunctionAssignmentNode.prototype._toTex = function(callbacks) {
+  var precedence = operators.getPrecedence(this);
+  var exprPrecedence = operators.getPrecedence(this.expr);
+
+  var expr = this.expr.toTex(callbacks);
+  if ((exprPrecedence !== null) && (exprPrecedence <= precedence)) {
+    //adds visible round brackets
+    expr = latex.addBraces(expr, true);
+  }
+  else {
+    //add (invisible) curly braces
+    expr = latex.addBraces(expr, false);
+  }
+
+  return latex.toFunction(this.name)
+       + latex.addBraces(this.params.map(latex.toSymbol).join(', '), true) + '=' //FIXME, this doesn't call toTex on the parameters AFAIK (toSymbol)
+       + expr;
 };
 
 module.exports = FunctionAssignmentNode;

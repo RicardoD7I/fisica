@@ -1,6 +1,7 @@
 'use strict';
 
 var Node = require('./Node');
+var operators = require('../operators');
 
 var isNode = Node.isNode;
 
@@ -87,26 +88,48 @@ RangeNode.prototype.clone = function() {
  * @return {String} str
  */
 RangeNode.prototype.toString = function() {
-  // format the range like "start:step:end"
-  var str = this.start.toString();
-  if (this.step) {
-    str += ':' + this.step.toString();
+  var precedence = operators.getPrecedence(this);
+
+  //format string as start:step:stop
+  var str;
+
+  var start = this.start.toString();
+  var startPrecedence = operators.getPrecedence(this.start);
+  if ((startPrecedence !== null) && (startPrecedence <= precedence)) {
+    start = '(' + start + ')';
   }
-  str += ':' + this.end.toString();
+  str = start;
+
+  if (this.step) {
+    var step = this.step.toString();
+    var stepPrecedence = operators.getPrecedence(this.step);
+    if ((stepPrecedence !== null) && (stepPrecedence <= precedence)) {
+      step = '(' + step + ')';
+    }
+    str += ':' + step;
+  }
+
+  var end = this.end.toString();
+  var endPrecedence = operators.getPrecedence(this.end);
+  if ((endPrecedence !== null) && (endPrecedence <= precedence)) {
+    end = '(' + end + ')';
+  }
+  str += ':' + end;
 
   return str;
 };
 
 /**
  * Get LaTeX representation
+ * @params {Object|function} callback(s)
  * @return {String} str
  */
-RangeNode.prototype.toTex = function() {
-  var str = this.start.toTex();
+RangeNode.prototype._toTex = function(callbacks) {
+  var str = this.start.toTex(callbacks);
   if (this.step) {
-    str += ':' + this.step.toTex();
+    str += ':' + this.step.toTex(callbacks);
   }
-  str += ':' + this.end.toTex();
+  str += ':' + this.end.toTex(callbacks);
 
   return str;
 };

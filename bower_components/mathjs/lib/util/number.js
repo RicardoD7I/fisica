@@ -1,5 +1,7 @@
 'use strict';
 
+var NumberFormatter = require('./NumberFormatter');
+
 /**
  * Test whether value is a Number
  * @param {*} value
@@ -145,44 +147,15 @@ exports.format = function(value, options) {
       return exports.toExponential(value, precision);
 
     case 'auto':
-      // determine lower and upper bound for exponential notation.
-        // TODO: implement support for upper and lower to be BigNumbers themselves
-      var lower = 1e-3;
-      var upper = 1e5;
-      if (options && options.exponential) {
-        if (options.exponential.lower !== undefined) {
-          lower = options.exponential.lower;
-        }
-        if (options.exponential.upper !== undefined) {
-          upper = options.exponential.upper;
-        }
-      }
+      return exports
+          .toPrecision(value, precision, options && options.exponential)
 
-      // handle special case zero
-      if (value === 0) return '0';
-
-      // determine whether or not to output exponential notation
-      var str;
-      var abs = Math.abs(value);
-      if (abs >= lower && abs < upper) {
-        // normal number notation
-        // Note: IE7 does not allow value.toPrecision(undefined)
-        var valueStr = precision ?
-            value.toPrecision(Math.min(precision, 21)) :
-            value.toPrecision();
-        str = parseFloat(valueStr) + '';
-      }
-      else {
-        // exponential notation
-        str = exports.toExponential(value, precision);
-      }
-
-      // remove trailing zeros after the decimal point
-      return str.replace(/((\.\d*?)(0+))($|e)/, function () {
-        var digits = arguments[2];
-        var e = arguments[4];
-        return (digits !== '.') ? digits + e : e;
-      });
+          // remove trailing zeros after the decimal point
+          .replace(/((\.\d*?)(0+))($|e)/, function () {
+            var digits = arguments[2];
+            var e = arguments[4];
+            return (digits !== '.') ? digits + e : e;
+          });
 
     default:
       throw new Error('Unknown notation "' + notation + '". ' +
@@ -199,12 +172,7 @@ exports.format = function(value, options) {
  * @returns {string} str
  */
 exports.toExponential = function(value, precision) {
-  if (precision !== undefined) {
-    return value.toExponential(Math.min(precision - 1, 20));
-  }
-  else {
-    return value.toExponential();
-  }
+  return new NumberFormatter(value).toExponential(precision);
 };
 
 /**
@@ -214,7 +182,20 @@ exports.toExponential = function(value, precision) {
  *                                      decimal point. Zero by default.
  */
 exports.toFixed = function(value, precision) {
-  return value.toFixed(Math.min(precision, 20));
+  return new NumberFormatter(value).toFixed(precision);
+};
+
+/**
+ * Format a number with a certain precision
+ * @param {Number} value
+ * @param {Number} [precision=undefined] Optional number of digits.
+ * @param {{lower: number, upper: number}} [options]  By default:
+ *                                                    lower = 1e-3 (excl)
+ *                                                    upper = 1e+5 (incl)
+ * @return {string}
+ */
+exports.toPrecision = function(value, precision, options) {
+  return new NumberFormatter(value).toPrecision(precision, options);
 };
 
 /**

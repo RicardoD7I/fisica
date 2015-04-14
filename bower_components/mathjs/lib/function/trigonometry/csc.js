@@ -1,18 +1,20 @@
 'use strict';
 
-module.exports = function (math) {
+module.exports = function (math, config) {
   var util = require('../../util/index'),
 
       BigNumber = math.type.BigNumber,
       Complex = require('../../type/Complex'),
       Unit = require('../../type/Unit'),
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = util.number.isNumber,
       isBoolean = util['boolean'].isBoolean,
       isComplex = Complex.isComplex,
       isUnit = Unit.isUnit,
-      isCollection = collection.isCollection;
+      isCollection = collection.isCollection,
+
+      bigCsc = util.bignumber.cos_sin_sec_csc;
 
   /**
    * Calculate the cosecant of a value, defined as `csc(x) = 1/sin(x)`.
@@ -71,9 +73,7 @@ module.exports = function (math) {
     }
 
     if (x instanceof BigNumber) {
-      // TODO: implement BigNumber support
-      // downgrade to Number
-      return csc(x.toNumber());
+      return bigCsc(x, BigNumber, 1, true);
     }
 
     throw new math.error.UnsupportedTypeError('csc', math['typeof'](x));

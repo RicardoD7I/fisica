@@ -4,7 +4,7 @@ var Node = require('./Node.js');
 var RangeNode = require('./RangeNode');
 var SymbolNode = require('./SymbolNode');
 
-var BigNumber = require('decimal.js');
+var BigNumber = require('../../type/BigNumber');
 var Range = require('../../type/Range');
 
 var isNode = Node.isNode;
@@ -94,16 +94,17 @@ IndexNode.prototype.compileSubset = function(defs, replacement) {
     var useEnd = rangesUseEnd[i];
     if (range instanceof RangeNode) {
       if (useEnd) {
+        defs.args.end = true;
+
         // resolve end and create range
-        return '(function (scope) {' +
-            '  scope = Object.create(scope); ' +
-            '  scope["end"] = size[' + i + '];' +
+        return '(function () {' +
+            '  var end = size[' + i + '];' +
             '  return range(' +
             '    ' + range.start._compile(defs) + ', ' +
             '    ' + range.end._compile(defs) + ', ' +
             '    ' + (range.step ? range.step._compile(defs) : '1') +
             '  );' +
-            '})(scope)';
+            '})()';
       }
       else {
         // create range
@@ -116,12 +117,13 @@ IndexNode.prototype.compileSubset = function(defs, replacement) {
     }
     else {
       if (useEnd) {
+        defs.args.end = true;
+
         // resolve the parameter 'end'
-        return '(function (scope) {' +
-            '  scope = Object.create(scope); ' +
-            '  scope["end"] = size[' + i + '];' +
+        return '(function () {' +
+            '  var end = size[' + i + '];' +
             '  return ' + range._compile(defs) + ';' +
-            '})(scope)'
+            '})()'
       }
       else {
         // just evaluate the expression
@@ -209,10 +211,11 @@ IndexNode.prototype.toString = function() {
 
 /**
  * Get LaTeX representation
+ * @param {Object|function} callback(s)
  * @return {String} str
  */
-IndexNode.prototype.toTex = function() {
-  return this.object.toTex() + '[' + this.ranges.join(', ') + ']';
+IndexNode.prototype._toTex = function(callbacks) {
+  return this.object.toTex(callbacks) + '[' + this.ranges.join(', ') + ']';
 };
 
 module.exports = IndexNode;

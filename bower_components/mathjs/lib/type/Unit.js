@@ -259,13 +259,13 @@ Unit.prototype._normalize = function(value) {
 };
 
 /**
- * Unnormalize a value, based on its currently set unit
+ * Denormalize a value, based on its currently set unit
  * @param {Number} value
  * @param {Number} [prefixValue]    Optional prefix value to be used
- * @return {Number} unnormalized value
+ * @return {Number} denormalized value
  * @private
  */
-Unit.prototype._unnormalize = function (value, prefixValue) {
+Unit.prototype._denormalize = function (value, prefixValue) {
   if (prefixValue == undefined) {
     return value / this.unit.value / this.prefix.value - this.unit.offset;
   }
@@ -384,7 +384,7 @@ Unit.prototype.to = function (valuelessUnit) {
  */
 Unit.prototype.toNumber = function (valuelessUnit) {
   var other = this.to(valuelessUnit);
-  return other._unnormalize(other.value, other.prefix.value);
+  return other._denormalize(other.value, other.prefix.value);
 };
 
 
@@ -394,6 +394,32 @@ Unit.prototype.toNumber = function (valuelessUnit) {
  */
 Unit.prototype.toString = function() {
   return this.format();
+};
+
+/**
+ * Get a JSON representation of the unit
+ * @returns {Object} Returns a JSON object structured as:
+ *                   `{"mathjs": "Unit", "value": 2, "unit": "cm", "fixPrefix": false}`
+ */
+Unit.prototype.toJSON = function () {
+  return {
+    mathjs: 'Unit',
+    value: this._denormalize(this.value),
+    unit: this.prefix.name + this.unit.name,
+    fixPrefix: this.fixPrefix
+  };
+};
+
+/**
+ * Instantiate a Unit from a JSON object
+ * @param {Object} json  A JSON object structured as:
+ *                       `{"mathjs": "Unit", "value": 2, "unit": "cm", "fixPrefix": false}`
+ * @return {Unit}
+ */
+Unit.fromJSON = function (json) {
+  var unit = new Unit(json.value, json.unit);
+  unit.fixPrefix = json.fixPrefix || false;
+  return unit;
 };
 
 /**
@@ -416,12 +442,12 @@ Unit.prototype.format = function(options) {
 
   if (this.value !== null && !this.fixPrefix) {
     var bestPrefix = this._bestPrefix();
-    value = this._unnormalize(this.value, bestPrefix.value);
+    value = this._denormalize(this.value, bestPrefix.value);
     str = number.format(value, options) + ' ';
     str += bestPrefix.name + this.unit.name;
   }
   else {
-    value = this._unnormalize(this.value);
+    value = this._denormalize(this.value);
     str = (this.value !== null) ? (number.format(value, options) + ' ') : '';
     str += this.prefix.name + this.unit.name;
   }
@@ -569,14 +595,14 @@ var PREFIXES = {
   },
   BINARY_SHORT: {
     '': {name: '', value: 1, scientific: true},
-    'k': {name: 'k', value: 1024, scientific: true},
-    'M': {name: 'M', value: Math.pow(1024, 2), scientific: true},
-    'G': {name: 'G', value: Math.pow(1024, 3), scientific: true},
-    'T': {name: 'T', value: Math.pow(1024, 4), scientific: true},
-    'P': {name: 'P', value: Math.pow(1024, 5), scientific: true},
-    'E': {name: 'E', value: Math.pow(1024, 6), scientific: true},
-    'Z': {name: 'Z', value: Math.pow(1024, 7), scientific: true},
-    'Y': {name: 'Y', value: Math.pow(1024, 8), scientific: true},
+    'k': {name: 'k', value: 1e3, scientific: true},
+    'M': {name: 'M', value: 1e6, scientific: true},
+    'G': {name: 'G', value: 1e9, scientific: true},
+    'T': {name: 'T', value: 1e12, scientific: true},
+    'P': {name: 'P', value: 1e15, scientific: true},
+    'E': {name: 'E', value: 1e18, scientific: true},
+    'Z': {name: 'Z', value: 1e21, scientific: true},
+    'Y': {name: 'Y', value: 1e24, scientific: true},
 
     'Ki': {name: 'Ki', value: 1024, scientific: true},
     'Mi': {name: 'Mi', value: Math.pow(1024, 2), scientific: true},
@@ -589,21 +615,21 @@ var PREFIXES = {
   },
   BINARY_LONG: {
     '': {name: '', value: 1, scientific: true},
-    'kilo': {name: 'kilo', value: 1024, scientific: true},
-    'mega': {name: 'mega', value: Math.pow(1024, 2), scientific: true},
-    'giga': {name: 'giga', value: Math.pow(1024, 3), scientific: true},
-    'tera': {name: 'tera', value: Math.pow(1024, 4), scientific: true},
-    'peta': {name: 'peta', value: Math.pow(1024, 5), scientific: true},
-    'exa': {name: 'exa', value: Math.pow(1024, 6), scientific: true},
-    'zetta': {name: 'zetta', value: Math.pow(1024, 7), scientific: true},
-    'yotta': {name: 'yotta', value: Math.pow(1024, 8), scientific: true},
+    'kilo': {name: 'kilo', value: 1e3, scientific: true},
+    'mega': {name: 'mega', value: 1e6, scientific: true},
+    'giga': {name: 'giga', value: 1e9, scientific: true},
+    'tera': {name: 'tera', value: 1e12, scientific: true},
+    'peta': {name: 'peta', value: 1e15, scientific: true},
+    'exa':  {name: 'exa', value: 1e18, scientific: true},
+    'zetta': {name: 'zetta', value: 1e21, scientific: true},
+    'yotta': {name: 'yotta', value: 1e24, scientific: true},
 
     'kibi': {name: 'kibi', value: 1024, scientific: true},
     'mebi': {name: 'mebi', value: Math.pow(1024, 2), scientific: true},
     'gibi': {name: 'gibi', value: Math.pow(1024, 3), scientific: true},
     'tebi': {name: 'tebi', value: Math.pow(1024, 4), scientific: true},
     'pebi': {name: 'pebi', value: Math.pow(1024, 5), scientific: true},
-    'exi': {name: 'exi', value: Math.pow(1024, 6), scientific: true},
+    'exi':  {name: 'exi', value: Math.pow(1024, 6), scientific: true},
     'zebi': {name: 'zebi', value: Math.pow(1024, 7), scientific: true},
     'yobi': {name: 'yobi', value: Math.pow(1024, 8), scientific: true}
   }
@@ -718,6 +744,7 @@ var UNITS = {
   poundmass: {name: 'poundmass', base: BASE_UNITS.MASS, prefixes: PREFIXES.NONE, value: 453.59237e-3, offset: 0},
   hundredweight: {name: 'hundredweight', base: BASE_UNITS.MASS, prefixes: PREFIXES.NONE, value: 45.359237, offset: 0},
   stick: {name: 'stick', base: BASE_UNITS.MASS, prefixes: PREFIXES.NONE, value: 115e-3, offset: 0},
+  stone: {name: 'stone', base: BASE_UNITS.MASS, prefixes: PREFIXES.NONE, value: 6350, offset: 0},
 
   gr: {name: 'gr', base: BASE_UNITS.MASS, prefixes: PREFIXES.NONE, value: 64.79891e-6, offset: 0},
   dr: {name: 'dr', base: BASE_UNITS.MASS, prefixes: PREFIXES.NONE, value: 1.7718451953125e-3, offset: 0},

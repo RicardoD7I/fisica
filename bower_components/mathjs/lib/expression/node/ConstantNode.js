@@ -1,9 +1,9 @@
 'use strict';
 
-var Node = require('./Node'),
-    BigNumber = require('decimal.js'),
-    type = require('../../util/types').type,
-    isString = require('../../util/string').isString;
+var Node = require('./Node');
+var BigNumber = require('../../type/BigNumber');
+var type = require('../../util/types').type;
+var isString = require('../../util/string').isString;
 
 /**
  * A ConstantNode holds a constant value like a number or string. A ConstantNode
@@ -156,9 +156,10 @@ ConstantNode.prototype.toString = function() {
 
 /**
  * Get LaTeX representation
+ * @param {Object|function} callback(s)
  * @return {String} str
  */
-ConstantNode.prototype.toTex = function() {
+ConstantNode.prototype._toTex = function(callbacks) {
   var value = this.value,
       index;
   switch (this.valueType) {

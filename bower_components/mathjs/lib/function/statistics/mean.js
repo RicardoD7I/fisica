@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function (math) {
-  var Matrix = require('../../type/Matrix'),
-      collection = require('../../type/collection'),
+  var Matrix = math.type.Matrix,
+      collection = math.collection,
 
       isCollection = collection.isCollection,
 
@@ -17,9 +17,9 @@ module.exports = function (math) {
    *
    * Syntax:
    *
-   *     mean.mean(a, b, c, ...)
-   *     mean.mean(A)
-   *     mean.mean(A, dim)
+   *     math.mean(a, b, c, ...)
+   *     math.mean(A)
+   *     math.mean(A, dim)
    *
    * Examples:
    *

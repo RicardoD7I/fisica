@@ -1,6 +1,61 @@
 # History
 
 
+## 2015-04-09, version 1.5.2
+
+- Fixed #313: parsed functions did not handle recursive calls correctly.
+- Fixed #251: binary prefix and SI prefix incorrectly used for byte. Now 
+  following SI standards (`1 KiB == 1024 B`, `1 kB == 1000 B`).
+- Performance improvements in parsed functions.
+
+
+## 2015-04-08, version 1.5.1
+
+- Fixed #316: a bug in rounding values when formatting.
+- Fixed #317, #319: a bug in formatting negative values.
+
+
+## 2015-03-28, version 1.5.0
+
+- Added unit `stone` (6.35 kg).
+- Implemented support for sparse matrices. Thanks @rjbaucells.
+- Implemented BigNumber support for function `atan2`. Thanks @BigFav.
+- Implemented support for custom LaTeX representations. Thanks @FSMaxB.
+- Improvements and bug fixes in outputting parentheses in `Node.toString` and
+  `Node.toTex` functions. Thanks @FSMaxB.
+- Fixed #291: function `format` sometimes returning exponential notation when
+  it should return a fixed notation.
+
+
+## 2015-02-28, version 1.4.0
+
+- Implemented trigonometric functions:
+  `acosh`, `acoth`, `acsch`, `asech`, `asinh`, `atanh`, `acot`, `acsc`, `asec`.
+  Thanks @BigFav.
+- Added BigNumber support for functions: `cot`, `csc`, `sec`, `coth`,
+  `csch`, `sech`. Thanks @BigFav.
+- Implemented support for serialization and deserialization of math.js data
+  types.
+- Fixed the calculation of `norm()` and `abs()` for large complex numbers.
+  Thanks @rjbaucells.
+- Fixed #281: improved formatting complex numbers. Round the real or imaginary
+  part to zero when the difference is larger than the configured precision.
+
+
+## 2015-02-09, version 1.3.0
+
+- Implemented BigNumber implementations of most trigonometric functions: `sin`,
+  `cos`, `tan`, `asin`, `acos`, `atan`, `cosh`, `sinh`, `tanh`. Thanks @BigFav.
+- Implemented function `trace`. Thanks @pcorey.
+- Faster loading of BigNumber configuration with a high precision by lazy
+  loading constants like `pi` and `e`.
+- Fixed constants `NaN` and `Infinity` not being BigNumber objects when
+  BigNumbers are configured.
+- Fixed missing parentheses in the `toTex` representation of function
+  `permutations`.
+- Some minor fixes in the docs. Thanks @KenanY.
+
+
 ## 2014-12-25, version 1.2.0
 
 - Support for bitwise operations `bitAnd`, `bitNot`, `bitOr`, `bitXor`,

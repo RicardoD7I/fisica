@@ -6,13 +6,15 @@ module.exports = function (math) {
       BigNumber = math.type.BigNumber,
       Complex = require('../../type/Complex'),
       Unit = require('../../type/Unit'),
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = util.number.isNumber,
       isBoolean = util['boolean'].isBoolean,
       isComplex = Complex.isComplex,
       isUnit = Unit.isUnit,
-      isCollection = collection.isCollection;
+      isCollection = collection.isCollection,
+
+      bigTanh = util.bignumber.tanh_coth;
 
   /**
    * Calculate the hyperbolic tangent of a value,
@@ -35,8 +37,8 @@ module.exports = function (math) {
    *
    *    sinh, cosh, coth
    *
-   * @param {Number | Boolean | Complex | Unit | Array | Matrix | null} x  Function input
-   * @return {Number | Complex | Array | Matrix} Hyperbolic tangent of x
+   * @param {Number | BigNumber | Boolean | Complex | Unit | Array | Matrix | null} x  Function input
+   * @return {Number | BigNumber | Complex | Array | Matrix} Hyperbolic tangent of x
    */
   math.tanh = function tanh(x) {
     if (arguments.length != 1) {
@@ -67,7 +69,8 @@ module.exports = function (math) {
     }
 
     if (isCollection(x)) {
-      return collection.deepMap(x, tanh);
+      // deep map collection, skip zeros since tanh(0) = 0
+      return collection.deepMap(x, tanh, true);
     }
 
     if (isBoolean(x) || x === null) {
@@ -75,9 +78,7 @@ module.exports = function (math) {
     }
 
     if (x instanceof BigNumber) {
-      // TODO: implement BigNumber support
-      // downgrade to Number
-      return tanh(x.toNumber());
+      return bigTanh(x, BigNumber, false);
     }
 
     throw new math.error.UnsupportedTypeError('tanh', math['typeof'](x));

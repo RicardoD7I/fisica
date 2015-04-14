@@ -39,6 +39,7 @@ Node.prototype.compile = function (math) {
   // definitions globally available inside the closure of the compiled expressions
   var defs = {
     math: _transform(math),
+    args: {}, // can be filled with names of FunctionAssignment arguments
     _validateScope: _validateScope
   };
 
@@ -221,11 +222,70 @@ Node.prototype.toString = function() {
 };
 
 /**
- * Get LaTeX representation
+ * Get LaTeX representation. (wrapper function)
+ * This functions get's either an object containing callbacks or
+ * a single callback. It decides whether to call the callback and if
+ * not or if the callback returns nothing, it calls the default
+ * LaTeX implementation of the node (_toTex).
+ *
+ * @param {Object|function} callback(s)
  * @return {String}
  */
-Node.prototype.toTex = function() {
-  return '';
+Node.prototype.toTex = function(callback) {
+  var customTex;
+  if (this.type === 'ArrayNode') {
+    //FIXME this is only a workaround for a breaking change,
+    //remove this in version2
+    delete this.latexType;
+  }
+  if (typeof callback === 'object') {
+    if ((this.type === 'FunctionNode') && callback.hasOwnProperty(this.name)) {
+      //if callback is a map of callback functions and this is a FunctionNode
+      customTex = callback[this.name](this, callback);
+    }
+  }
+  else if (typeof callback === 'function') {
+    //if callback is a function
+    customTex = callback(this, callback);
+  }
+  else if ((typeof callback === 'string') && (this.type === 'ArrayNode')) {
+    //FIXME this is only a workaround for a breaking change,
+    //remove this in version2
+    this.latexType = callback;
+  }
+  else if (typeof callback !== 'undefined') {
+    throw new TypeError('Object or function expected as callback');
+  }
+
+  if (typeof customTex !== 'undefined') {
+    return customTex;
+  }
+
+  return this._toTex(callback);
+};
+
+/**
+ * Internal function to generate the LaTeX output.
+ * This has to be implemented by every Node
+ *
+ * @param {Object}|function}
+ * @throws {Error}
+ */
+Node.prototype._toTex = function () {
+  if (this.type === 'Node') {
+    //FIXME remove this in v2
+    return '';
+  }
+  //must be implemented by each of the Node implementations
+  throw new Error('_toTex not implemented for this Node');
+};
+
+/**
+ * Get identifier.
+ * @return {String}
+ */
+Node.prototype.getIdentifier = function () {
+ return this.type;
 };
 
 /**
@@ -262,12 +322,10 @@ function _validateScope (scope) {
 function _transform(math) {
   var transformed = Object.create(math);
 
-  for (var name in math) {
-    if (math.hasOwnProperty(name)) {
-      var fn = math[name];
-      var transform = fn && fn.transform;
-      if (transform) {
-        transformed[name] = transform;
+  if (math.expression && math.expression.transform) {
+    for (var name in math.expression.transform) {
+      if (math.expression.transform.hasOwnProperty(name)) {
+        transformed[name] = math.expression.transform[name];
       }
     }
   }

@@ -6,7 +6,7 @@
                 <h4 class="modal-title">Datos de ingreso</h4>
             </div>
             <div class="modal-body">
-                <form name="parametrosForm" class="form-horizontal" novalidate="novalidate" bs-collapse>
+                <form name="parametrosForm" class="form-horizontal" novalidate="novalidate" bs-collapse data-allow-multiple="true">
 
                     <div class="panel" ng-form="dimensionesForm" ng-class="{'panel-primary': dimensionesForm.$valid, 'panel-danger':dimensionesForm.$invalid}">
                         <div class="panel-heading" bs-collapse-toggle>
@@ -65,7 +65,7 @@
                                     Fluido superior&nbsp;<i class="glyphicon glyphicon-info-sign text-info" bs-tooltip data-title="{{ 'Este fluido es el que ejercer\u00E1 la presi\u00F3n sobre el fluido a estudiar' }}" data-container="body"></i>:
                                 </label>
                                 <div class="col-sm-7">
-                                    <button type="button" class="btn btn-default" id="fluidoSuperior" ng-model="tanque.gas" ng-required="tanque.tapa" bs-select ng-options="gas as gas.nombre for gas in gases" data-placeholder="Seleccione el fluido superior">
+                                    <button type="button" class="btn btn-default" id="fluidoSuperior" ng-model="tanque.gas" ng-required="tanque.tapa" bs-select bs-options="gas as gas.nombre for gas in gases" data-placeholder="Seleccione el fluido superior">
                                         <span class="caret"></span>
                                     </button>
                                 </div>
@@ -138,7 +138,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label" for="tipoFluido">Tipo de fluido:</label>
                                 <div class="col-sm-7">
-                                    <button type="button" class="btn btn-default" id="tipoFluido" ng-model="tanque.fluido" ng-required="true" bs-select ng-options="fluido as fluido.nombre for fluido in fluidos" data-placeholder="Seleccione el fluido">
+                                    <button type="button" class="btn btn-default" id="tipoFluido" ng-model="tanque.fluido" ng-required="true" bs-select bs-options="fluido as fluido.nombre for fluido in fluidos" data-placeholder="Seleccione el fluido">
                                         <span class="caret"></span>
                                     </button>
                                 </div>

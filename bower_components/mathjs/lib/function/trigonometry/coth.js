@@ -6,13 +6,15 @@ module.exports = function (math) {
       BigNumber = math.type.BigNumber,
       Complex = require('../../type/Complex'),
       Unit = require('../../type/Unit'),
-      collection = require('../../type/collection'),
+      collection = math.collection,
 
       isNumber = util.number.isNumber,
       isBoolean = util['boolean'].isBoolean,
       isComplex = Complex.isComplex,
       isUnit = Unit.isUnit,
-      isCollection = collection.isCollection;
+      isCollection = collection.isCollection,
+
+      bigCoth = util.bignumber.tanh_coth;
 
   /**
    * Calculate the hyperbolic cotangent of a value,
@@ -74,9 +76,7 @@ module.exports = function (math) {
     }
 
     if (x instanceof BigNumber) {
-      // TODO: implement BigNumber support
-      // downgrade to Number
-      return coth(x.toNumber());
+      return bigCoth(x, BigNumber, true);
     }
 
     throw new math.error.UnsupportedTypeError('coth', math['typeof'](x));
