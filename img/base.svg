@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Creator: CorelDRAW X7 -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="201px" height="369px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 201 369"
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="200px" height="360px" preserveAspectRatio="none" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 201 361"
  xmlns:xlink="http://www.w3.org/1999/xlink">
  <defs>
   <style type="text/css">
@@ -25,42 +25,42 @@ viewBox="0 0 201 369"
    <stop offset="0" style="stop-opacity:1; stop-color:#E6E6E6"/>
    <stop offset="1" style="stop-opacity:1; stop-color:white"/>
   </linearGradient>
-  <linearGradient id="id1" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="40.5057" y1="183.396" x2="160.495" y2="183.396">
+  <linearGradient id="id1" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="40.5057" y1="175.624" x2="160.495" y2="175.624">
   </linearGradient>
-  <linearGradient id="id2" gradientUnits="userSpaceOnUse" x1="0.377919" y1="13.1497" x2="200.36" y2="13.1497">
+  <linearGradient id="id2" gradientUnits="userSpaceOnUse" x1="0.377919" y1="5.37741" x2="200.36" y2="5.37741">
    <stop offset="0" style="stop-opacity:1; stop-color:#E6F0FF"/>
    <stop offset="1" style="stop-opacity:1; stop-color:white"/>
   </linearGradient>
-  <linearGradient id="id3" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="100.5" y1="128.401" x2="100.5" y2="118.402">
+  <linearGradient id="id3" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="100.5" y1="120.629" x2="100.5" y2="110.629">
   </linearGradient>
-  <linearGradient id="id4" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="100.5" y1="253.391" x2="100.5" y2="243.391">
+  <linearGradient id="id4" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="100.5" y1="245.618" x2="100.5" y2="235.619">
   </linearGradient>
-  <linearGradient id="id5" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="160.794" y1="235.179" x2="180.194" y2="141.612">
+  <linearGradient id="id5" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="160.794" y1="227.407" x2="180.194" y2="133.84">
   </linearGradient>
-  <linearGradient id="id6" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="20.8067" y1="235.179" x2="40.2064" y2="141.612">
+  <linearGradient id="id6" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="20.8067" y1="227.407" x2="40.2064" y2="133.84">
   </linearGradient>
-  <linearGradient id="id7" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="42.0057" y1="130.401" x2="49.0048" y2="116.402">
+  <linearGradient id="id7" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="42.0057" y1="122.629" x2="49.0048" y2="108.63">
   </linearGradient>
-  <linearGradient id="id8" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="42.0057" y1="255.39" x2="49.0048" y2="241.391">
+  <linearGradient id="id8" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="42.0057" y1="247.618" x2="49.0048" y2="233.619">
   </linearGradient>
-  <linearGradient id="id9" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="151.996" y1="130.401" x2="158.995" y2="116.402">
+  <linearGradient id="id9" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="151.996" y1="122.629" x2="158.995" y2="108.63">
   </linearGradient>
-  <linearGradient id="id10" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="151.996" y1="255.39" x2="158.995" y2="241.391">
+  <linearGradient id="id10" gradientUnits="userSpaceOnUse" xlink:href="#id0" x1="151.996" y1="247.618" x2="158.995" y2="233.619">
   </linearGradient>
  </defs>
  <g id="Capa_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <polygon class="fil0 str0" points="21,8 41,8 41,368 21,368 "/>
-  <polygon class="fil1 str0" points="160,8 180,8 180,368 160,368 "/>
-  <polygon class="fil2 str0" points="43,368 101,311 158,368 160,368 160,366 103,308 160,251 160,246 101,306 41,246 41,251 98,308 41,366 41,368 "/>
-  <polygon class="fil3 str0" points="41,246 101,186 160,246 160,241 103,183 160,126 160,121 101,181 41,121 41,126 98,183 41,241 "/>
-  <polygon class="fil2 str0" points="41,126 101,66 160,126 160,121 103,63 160,6 160,1 101,61 41,1 41,6 98,63 41,121 "/>
-  <rect class="fil4 str0" x="41" y="243" width="119.989" height="9.99971"/>
-  <rect class="fil5 str0" x="41" y="118" width="119.989" height="9.99971"/>
-  <polygon class="fil6 str0" points="41,238 51,238 51,258 41,258 "/>
-  <polygon class="fil7 str0" points="150,238 160,238 160,258 150,258 "/>
-  <polygon class="fil8 str0" points="150,113 160,113 160,133 150,133 "/>
-  <polygon class="fil9 str0" points="41,113 51,113 51,133 41,133 "/>
-  <path class="fil10 str0" d="M100 8l100 0c0,0 0,0 0,0 0,11 -61,10 -100,10 -38,0 -100,1 -100,-10 0,0 0,0 0,0l100 0z"/>
+  <polygon class="fil0 str0" points="21,1 41,1 41,361 21,361 "/>
+  <polygon class="fil1 str0" points="160,1 180,1 180,361 160,361 "/>
+  <polygon class="fil2 str0" points="43,361 101,303 158,361 160,361 160,358 103,301 160,243 160,238 101,298 41,238 41,243 98,301 41,358 41,361 "/>
+  <polygon class="fil3 str0" points="41,238 101,178 160,238 160,233 103,176 160,118 160,113 101,173 41,113 41,118 98,176 41,233 "/>
+  <polygon class="fil2 str0" points="41,118 101,58 160,118 160,113 103,56 158,0 153,0 101,53 48,0 43,0 98,56 41,113 "/>
+  <rect class="fil4 str0" x="41" y="236" width="119.989" height="9.99971"/>
+  <rect class="fil5 str0" x="41" y="111" width="119.989" height="9.99971"/>
+  <polygon class="fil6 str0" points="41,231 51,231 51,251 41,251 "/>
+  <polygon class="fil7 str0" points="150,231 160,231 160,251 150,251 "/>
+  <polygon class="fil8 str0" points="150,106 160,106 160,126 150,126 "/>
+  <polygon class="fil9 str0" points="41,106 51,106 51,126 41,126 "/>
+  <path class="fil10 str0" d="M100 0l100 0c0,0 0,0 0,0 0,11 -61,10 -100,10 -38,0 -100,1 -100,-10 0,0 0,0 0,0l100 0z"/>
  </g>
 </svg>

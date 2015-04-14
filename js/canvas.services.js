@@ -43,13 +43,18 @@ angular.module('canvas').service('CanvasContextService', [
          */
         this.newInstance = function (canvas, instanceName, contextAttributes) {
             var instance = CanvasContext2dFactory(canvas, contextAttributes);
+
             !!instanceName && (_contextInstancesMap[instanceName] = instance);
             _contextInstancesArray.push(instance);
-            angular.forEach(_listeners, function (l) {
+            _listeners = _listeners.reduce(function (a, l) {
                 if (l.instanceName == instanceName || l.instanceName == _contextInstancesArray.length - 1) {
                     l.deferred.resolve(instance);
+                } else {
+                    a.push(l);
                 }
-            });
+                return a;
+            }, []);
+
             return instance;
         };
 

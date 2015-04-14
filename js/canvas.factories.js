@@ -438,7 +438,7 @@ angular.module('canvas').factory('CanvasSVGFactory', [
                     context.scale(_s.scale.x, _s.scale.y);
                     context.rotate(CanvasUtils.toRadians(_s.angle));
                     context.translate(-_s.width / 2, -_s.height / 2);
-                    context.drawImage(_s.image, 0, 0);
+                    context.drawImage(_s.image, 0, 0, _s.width, _s.height);
                     context.restore();
                 }
             };
