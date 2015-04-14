@@ -42,7 +42,6 @@ angular.module('simulador').controller('homeController', [
             tanqueImg = new Rectangle(0, 237, 240, 363, 'transparent', 'img/tanque.png');
 
             $scope.elements = [
-                new Rectangle(0, 0, 800, 600, 'white', 'img/fondo2.png'),
                 tanqueImg,
                 new StyledText("Simulador", 10, 10, "bold large sans-serif", 'red', 'left', 'top'),
                 agua,
