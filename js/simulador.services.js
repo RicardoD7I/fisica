@@ -1,11 +1,11 @@
 "use strict";
 
 angular.module('simulador').service('calculos', [
-    'math',
-    function (math) {
+    'math', 'FPS',
+    function (math, FPS) {
         /* ESTADO TANQUE CON O SIN TAPA */
         var _calculoCaudal = math.compile("areaOrificio * velocidadSalida");
-        var _calcularAltura = math.compile("((altura * baseTanque) - caudal / 60) / baseTanque");
+        var _calcularAltura = math.compile("((altura * baseTanque) - caudal / " + FPS + ") / baseTanque");
         var _prevenirNegativos = math.compile("v < 0 ? 0 : v");
 
         /* ESTADO TANQUE SOLO CON TAPA */

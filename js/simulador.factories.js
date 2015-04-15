@@ -19,54 +19,51 @@ angular.module('simulador').factory('fluidos', [
 ]);
 
 angular.module('simulador').factory('GotaFactory', [
-    'CanvasCircleFactory',
-    function (CanvasCircleFactory) {
-        return function (origenX, origenY, xInicial, yInicial, longitudTubo, anguloTubo, velocidadInicial, gravedad) {
-            var x = xInicial,
-                y = yInicial,
-                recta = longitudTubo,
+    'CanvasCircleFactory', 'FPS', 'ESCALA_PX_MT',
+    function (CanvasCircleFactory, FPS, ESCALA_PX_MT) {
+        return function (origenXpx, origenYpx, xInicialMt, yInicialMt, velocidadInicial, anguloTubo, gravedad) {
+            var x = xInicialMt,
+                y = yInicialMt,
                 velX = velocidadInicial * Math.cos(anguloTubo * (Math.PI / 180)),
-                velY = velocidadInicial * Math.sin(anguloTubo * (Math.PI / 180));
-
+                velY = velocidadInicial * Math.sin(anguloTubo * (Math.PI / 180)),
+                deltaTiempo = 1 / FPS;
 
             var circle = CanvasCircleFactory({
+                x: origenXpx + x * ESCALA_PX_MT,
+                y: origenYpx - y * ESCALA_PX_MT,
                 radius: 2,
                 fillStyle: 'rgba(0, 0, 255, .5)'
             });
 
-            function _posFinal(x, y, vx, vy, ax, ay, t) {
-                return {
-                    x: x + vx * t + .5 * ax * Math.pow(t, 2),
-                    y: y + vy * t + .5 * ay * Math.pow(t, 2)
+            return {
+                paint: function (context) {
+                    circle.paint(context);
+                    update();
                 }
+            };
+
+            function _posicionFinal(posicionInicial, velocidadInicial, aceleracion, tiempo) {
+                return posicionInicial + velocidadInicial * tiempo + .5 * aceleracion * Math.pow(tiempo, 2);
             }
 
-            function _velFinal(vx, vy, ax, ay, t) {
-                return {
-                    x: vx + ax * t,
-                    y: vy + ay * t
-                };
+            function _velocidadFinal(velocidadInicial, aceleracion, tiempo) {
+                return velocidadInicial + aceleracion * tiempo;
             }
 
             function update () {
-                if (x > 0 && y > 0) {
-                    var nuevaPos = _posFinal(x, y, velX, velY, 0, (recta > 0) ? 0 : gravedad, 1 / 60);
-                    var nuevaVel = _velFinal(velX, velY, 0, gravedad, 1 / 60);
-                    x = nuevaPos.x;
-                    y = nuevaPos.y;
-                    velX = nuevaVel.x;
-                    velY = nuevaVel.y;
-                    circle.x = origenX + x;
-                    circle.y = origenY - y;
+                if (y > 0) {
+                    x = _posicionFinal(x, velX, 0, deltaTiempo);
+                    y = _posicionFinal(y, velY, gravedad, deltaTiempo);
+                    if (y < 0) {
+                        y = 0;
+                        // TODO: al ubicar Y en 0, ubicar X en donde corresponde.
+                    }
+                    velX = _velocidadFinal(velX, 0, deltaTiempo);
+                    velY = _velocidadFinal(velY, gravedad, deltaTiempo);
+                    circle.x = origenXpx + x * ESCALA_PX_MT;
+                    circle.y = origenYpx - y * ESCALA_PX_MT;
                 }
             }
-
-            return {
-                paint: function (context) {
-                    update();
-                    circle.paint(context);
-                }
-            };
         }
     }
 ]);

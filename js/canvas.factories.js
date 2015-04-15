@@ -324,7 +324,7 @@ angular.module('canvas').factory('CanvasCircleFactory', [
                 context.scale(_c.scale.x, _c.scale.y);
                 context.fillStyle = _c.fillStyle;
                 context.beginPath();
-                context.arc(_c.x - _c.radius/2, _c.y - _c.radius/2, _c.radius, 0, 2 * Math.PI, false);
+                context.arc(0, 0, _c.radius, 0, 2 * Math.PI, false);
                 context.fill();
                 context.restore();
             };
