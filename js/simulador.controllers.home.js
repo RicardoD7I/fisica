@@ -14,7 +14,7 @@ angular.module('simulador').controller('homeController', [
             tanque = CanvasSVGFactory(),
             tapa = CanvasSVGFactory(),
             agua = CanvasRectFactory({
-                fillStyle: 'rgba(0, 0, 255, .5)'
+                fillStyle: 'rgba(0, 0, 255, .75)'
             }),
             info = CanvasTextFactory({
                 x: 790,
@@ -133,7 +133,7 @@ angular.module('simulador').controller('homeController', [
                 canvasContext.addElements(GotaFactory(
                     0, OFFSET_EJE_X, // en PX
                     $scope.tanque.diametro / 2, $scope.tanque.alturaPlataforma, // en MT
-                    math.number(valoresCalculo.velocidadSalida),
+                    valoresCalculo.velocidadSalida,
                     $scope.tanque.orificio.angulo,
                     -GRAVEDAD
                 ));

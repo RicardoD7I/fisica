@@ -19,20 +19,26 @@ angular.module('simulador').factory('fluidos', [
 ]);
 
 angular.module('simulador').factory('GotaFactory', [
-    'CanvasCircleFactory', 'FPS', 'ESCALA_PX_MT',
-    function (CanvasCircleFactory, FPS, ESCALA_PX_MT) {
+    'CanvasCircleFactory', 'calculos', 'math', 'FPS', 'ESCALA_PX_MT',
+    function (CanvasCircleFactory, calculos, math, FPS, ESCALA_PX_MT) {
         return function (origenXpx, origenYpx, xInicialMt, yInicialMt, velocidadInicial, anguloTubo, gravedad) {
             var x = xInicialMt,
                 y = yInicialMt,
-                velX = velocidadInicial * Math.cos(anguloTubo * (Math.PI / 180)),
-                velY = velocidadInicial * Math.sin(anguloTubo * (Math.PI / 180)),
-                deltaTiempo = 1 / FPS;
+                velX = math.eval('vel * cos(theta * (PI / 180))', {
+                    vel: velocidadInicial,
+                    theta: anguloTubo
+                }),
+                velY = math.eval('vel * sin(theta * (PI / 180))', {
+                    vel: velocidadInicial,
+                    theta: anguloTubo
+                }),
+                deltaTiempo = math.eval('1 / ' + FPS);
 
             var circle = CanvasCircleFactory({
                 x: origenXpx + x * ESCALA_PX_MT,
                 y: origenYpx - y * ESCALA_PX_MT,
                 radius: 2,
-                fillStyle: 'rgba(0, 0, 255, .5)'
+                fillStyle: 'rgba(0, 0, 255, .75)'
             });
 
             return {
@@ -42,26 +48,36 @@ angular.module('simulador').factory('GotaFactory', [
                 }
             };
 
-            function _posicionFinal(posicionInicial, velocidadInicial, aceleracion, tiempo) {
-                return posicionInicial + velocidadInicial * tiempo + .5 * aceleracion * Math.pow(tiempo, 2);
-            }
-
-            function _velocidadFinal(velocidadInicial, aceleracion, tiempo) {
-                return velocidadInicial + aceleracion * tiempo;
-            }
-
             function update () {
                 if (y > 0) {
-                    x = _posicionFinal(x, velX, 0, deltaTiempo);
-                    y = _posicionFinal(y, velY, gravedad, deltaTiempo);
-                    if (y < 0) {
+                    x = calculos.posicionFinal.eval({
+                        posicionInicial: x,
+                        velocidadInicial: velX,
+                        aceleracion: 0,
+                        tiempo: deltaTiempo
+                    });
+                    y = calculos.posicionFinal.eval({
+                        posicionInicial: y,
+                        velocidadInicial: velY,
+                        aceleracion: gravedad,
+                        tiempo: deltaTiempo
+                    });
+                    velX = calculos.velocidadFinal.eval({
+                        velocidadInicial: velX,
+                        aceleracion: 0,
+                        tiempo: deltaTiempo
+                    });
+                    velY = calculos.velocidadFinal.eval({
+                        velocidadInicial: velY,
+                        aceleracion: gravedad,
+                        tiempo: deltaTiempo
+                    });
+                    if (math.number(y) < 0) {
                         y = 0;
                         // TODO: al ubicar Y en 0, ubicar X en donde corresponde.
                     }
-                    velX = _velocidadFinal(velX, 0, deltaTiempo);
-                    velY = _velocidadFinal(velY, gravedad, deltaTiempo);
-                    circle.x = origenXpx + x * ESCALA_PX_MT;
-                    circle.y = origenYpx - y * ESCALA_PX_MT;
+                    circle.x = origenXpx + math.number(x) * ESCALA_PX_MT;
+                    circle.y = origenYpx - math.number(y) * ESCALA_PX_MT;
                 }
             }
         }

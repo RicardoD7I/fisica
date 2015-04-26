@@ -20,6 +20,10 @@ angular.module('simulador').service('calculos', [
         var _calculoArea = math.compile("( ( d / 2 ) ^ 2 ) * PI");
         var _calculoAlturaTanquePX = math.compile("alturaFluido / alturaTanque * pixeles");
 
+        /* CINEMÁTICA */
+        var _posicionFinal = math.compile('posicionInicial + (velocidadInicial * tiempo) + (.5 * aceleracion * (tiempo ^ 2))');
+        var _velocidadFinal = math.compile('velocidadInicial + aceleracion + tiempo');
+
         /* -------- */
         this.estadoTanque = {
             conTapa: function (valoresCalculo) {
@@ -46,5 +50,7 @@ angular.module('simulador').service('calculos', [
         };
         this.area = _calculoArea;
         this.alturaTanquePX = _calculoAlturaTanquePX;
+        this.posicionFinal = _posicionFinal;
+        this.velocidadFinal = _velocidadFinal;
     }
 ]);

@@ -44,28 +44,3 @@ angular.module('simulador').directive('numberRange', [
         }
     }
 ]);
-
-
-angular.module('simulador').directive('context2d', [function () {
-    return {
-        restrict: 'A',
-        scope: { initCallback: '=?', elements: '=?', renderSizeHeight: '=?', renderSizeWidth: '=?'},
-        link: function (scope, element, attrs) {
-            if (element[0].tagName == 'CANVAS') {
-                var canvas2d = new Canvas2d(element[0]);
-
-                if (angular.isArray(scope.elements)) {
-                    canvas2d.elements = scope.elements;
-                }
-
-                if (angular.isNumber(scope.renderSizeHeight) && angular.isNumber(scope.renderSizeWidth)) {
-                    canvas2d.setRenderSize(scope.renderSizeWidth, scope.renderSizeHeight);
-                }
-
-                if (angular.isFunction(scope.initCallback)) {
-                    scope.initCallback(canvas2d);
-                }
-            }
-        }
-    }
-}]);
