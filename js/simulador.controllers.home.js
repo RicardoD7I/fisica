@@ -33,14 +33,14 @@ angular.module('simulador').controller('homeController', [
 
         $scope.tanque = {
             altura: 2,
-            diametro: 2,
+            diametro: 2, // en CM
             nivel: 50, // porcentaje: 0 a 100
             tapa: false,
             gas: null,
             alturaPlataforma: 3.6,
             orificio: {
                 ubicacion: 'LATERAL',
-                diametro: 0,
+                diametro: 10,
                 altura: 0,
                 largo: 0,
                 angulo: 0
@@ -169,21 +169,21 @@ angular.module('simulador').controller('homeController', [
                 gravedad: GRAVEDAD,
 
                 /*Datos gas*/
-                densidadGas: math.bignumber($scope.tanque.gas ? $scope.tanque.gas.densidad : 0), // TODO: parche, checkear luego
-                alturaGas: math.bignumber($scope.tanque.altura * ((100 - $scope.tanque.nivel)/100)),
+                densidadGas: $scope.tanque.gas ? $scope.tanque.gas.densidad : 0, // TODO: parche, checkear luego
+                alturaGas: math.eval($scope.tanque.altura + ' * (1 - (' + $scope.tanque.nivel + ' / 100))'),
 
                 /*Datos Liquido*/
-                densidadLiquido: math.bignumber($scope.tanque.fluido.densidad),
-                alturaInicial: math.bignumber($scope.tanque.altura * ($scope.tanque.nivel/100)), //alturaInicial se refiere a la altura del liquido desde el fondo del tanque hasta el pelo de agua
-                presionSalida: math.bignumber(0),
+                densidadLiquido: $scope.tanque.fluido.densidad,
+                alturaInicial: math.eval($scope.tanque.altura + ' * ' + $scope.tanque.nivel + ' / 100'), //alturaInicial se refiere a la altura del liquido desde el fondo del tanque hasta el pelo de agua
+                presionSalida: 0,
 
                 /*Datos Tanque*/
-                areaOrificio: math.bignumber(calculos.area.eval({d: parseFloat($scope.tanque.orificio.diametro)})),
-                alturaTubo: math.bignumber($scope.tanque.orificio.altura),
-                areaBaseTanque: math.bignumber(calculos.area.eval({d: parseFloat($scope.tanque.diametro)})),
+                areaOrificio: calculos.area.eval({d: math.unit($scope.tanque.orificio.diametro, 'cm').toNumber('m') }),
+                alturaTubo: $scope.tanque.orificio.altura,
+                areaBaseTanque: calculos.area.eval({d: parseFloat($scope.tanque.diametro)}),
 
                 /*Salida*/
-                velocidadSalida: math.bignumber(0)
+                velocidadSalida: 0
             };
 
             updateAgua(valoresCalculo);
