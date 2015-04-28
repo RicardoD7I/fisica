@@ -35,21 +35,19 @@ angular.module('simulador').factory('GotaFactory', [
                 fillStyle: 'rgba(0, 0, 255, .5)'
             });
 
-            var doUpdate = update;
-
-            return {
-                paint: function (context) {
-                    circle.paint(context);
-                    doUpdate();
-                }
+            var _instance = {
+                paint: paintAndUpdate
             };
 
-            function update () {
+            return _instance;
+
+            function paintAndUpdate (context) {
+                circle.paint(context);
                 x = _posicionFinal(x, velX, 0, deltaTiempo);
                 y = _posicionFinal(y, velY, gravedad, deltaTiempo);
                 if (y < 0) {
                     y = 0; // TODO: al ubicar Y en 0, ubicar X en donde corresponde.
-                    doUpdate = angular.noop;
+                    _instance.paint = circle.paint;
                 }
                 velX = _velocidadFinal(velX, 0, deltaTiempo);
                 velY = _velocidadFinal(velY, gravedad, deltaTiempo);
