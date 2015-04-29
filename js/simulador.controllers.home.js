@@ -6,11 +6,8 @@ angular.module('simulador').controller('homeController', [
     function ($scope, $q, math, gases, fluidos, calculos, GRAVEDAD, FPS, ESCALA_PX_MT, GotaFactory, CanvasContextService, CanvasUtils, CanvasRectFactory, CanvasCircleFactory, CanvasImageFactory, CanvasSVGFactory, CanvasTextFactory) {
         var OFFSET_EJE_X = 600; //posición, de arriba hacia abajo, del eje X en px dentro del canvas.
 
-        var canvasContext = null,
-            working = false;
-
-        /* Elementos dinámicos del canvas */
-        var base = CanvasSVGFactory(),
+        var canvasContext = null, /* Elementos dinámicos del canvas */
+            base = CanvasSVGFactory(),
             tanque = CanvasSVGFactory(),
             tapa = CanvasSVGFactory(),
             agua = CanvasRectFactory({
@@ -24,10 +21,39 @@ angular.module('simulador').controller('homeController', [
                 fillStyle: 'red',
                 align: 'right',
                 baseline: 'top'
-            });
+            }),
+            basicElements = [base, tanque, tapa, agua, info],
+            ultimaGota;
 
         var valoresCalculo = {},
             fnCalculador = function () {};
+
+        var timer = function () {
+            var _seconds = 0,
+                _interval = null,
+                timer;
+
+            return timer = {
+                start: function () {
+                    info.text = "Tiempo: " + _seconds + " seg";
+                    _interval = setInterval(function () {
+                        _seconds++;
+                        info.text = "Tiempo: " + _seconds + " seg";
+                    }, 1000);
+                    return timer;
+                },
+                stop: function () {
+                    !!_interval && clearInterval(_interval);
+                    info.text = "Detenido en: " + _seconds + " seg";
+                    return timer;
+                },
+                reset: function () {
+                    _seconds = 0;
+                    !_interval && (info.text = "Detenido");
+                    return timer;
+                }
+            }
+        }();
 
         $scope.FPS = FPS;
 
@@ -40,7 +66,7 @@ angular.module('simulador').controller('homeController', [
             alturaPlataforma: 3.6,
             orificio: {
                 ubicacion: 'LATERAL',
-                diametro: 10,
+                diametro: 30,
                 altura: 0,
                 largo: 0,
                 angulo: 0
@@ -52,6 +78,8 @@ angular.module('simulador').controller('homeController', [
 
         /* INICIALIZACIÓN */
         function init() {
+            $scope.working = false;
+
             $q.all({
                 context: CanvasContextService.getInstance('canvasSimulador'),
                 images: $q.all({
@@ -93,14 +121,8 @@ angular.module('simulador').controller('homeController', [
                 }, true);
 
                 // init canvas
-                window.ctx = canvasContext = resources.context;
-                canvasContext.addElements([
-                    base,
-                    tanque,
-                    tapa,
-                    agua,
-                    info
-                ]);
+                canvasContext = resources.context;
+                canvasContext.addElements(basicElements);
                 updateTanque();
             })
         }
@@ -130,7 +152,7 @@ angular.module('simulador').controller('homeController', [
             updateAgua(valoresCalculo);
 
             if (agua.height > 1) {
-                canvasContext.addElements(GotaFactory(
+                canvasContext.addElements(ultimaGota = GotaFactory(
                     0, OFFSET_EJE_X, // en PX
                     $scope.tanque.diametro / 2, $scope.tanque.alturaPlataforma, // en MT
                     valoresCalculo.velocidadSalida,
@@ -138,32 +160,24 @@ angular.module('simulador').controller('homeController', [
                     -GRAVEDAD
                 ));
             }
+            $scope.working = $scope.working && ultimaGota.isMoving; //detenido por fuera o porque se terminó de mover la última gota
 
-            if (working) {
+            if ($scope.working) {
                 canvasContext.frame(update);
+            } else {
+                timer.stop();
+                canvasContext.frame();
             }
         }
-
-        window.frame = update;
 
         $scope.updateTanque = updateTanque;
 
         $scope.startSimulation = function () {
-            working = true;
+            $scope.working = true;
 
-            var seconds = 0;
-
-            var updateTimer = function() {
-                setTimeout(function(){
-                    info.text = "Tiempo: " + seconds.toString() + " seg";
-                    seconds++;
-                    if (working) {
-                        updateTimer()
-                    }
-                }, 1000);
-            };
-
-            updateTimer();
+            canvasContext.getElements().splice(0, canvasContext.getElements().length); // empty array
+            canvasContext.addElements(basicElements);
+            timer.reset().start();
 
             valoresCalculo = {
                 gravedad: GRAVEDAD,
@@ -191,6 +205,10 @@ angular.module('simulador').controller('homeController', [
             fnCalculador = $scope.tanque.tapa ?  calculos.estadoTanque.conTapa : calculos.estadoTanque.sinTapa;
 
             canvasContext.frame(update);
+        };
+
+        $scope.stopSimulation = function () {
+            $scope.working = false;
         };
 
         init();

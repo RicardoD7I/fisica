@@ -36,6 +36,7 @@ angular.module('simulador').factory('GotaFactory', [
             });
 
             var _instance = {
+                isMoving: true,
                 paint: paintAndUpdate
             };
 
@@ -48,6 +49,7 @@ angular.module('simulador').factory('GotaFactory', [
                 if (y < 0) {
                     y = 0; // TODO: al ubicar Y en 0, ubicar X en donde corresponde.
                     _instance.paint = circle.paint;
+                    _instance.isMoving = false;
                 }
                 velX = _velocidadFinal(velX, 0, deltaTiempo);
                 velY = _velocidadFinal(velY, gravedad, deltaTiempo);
