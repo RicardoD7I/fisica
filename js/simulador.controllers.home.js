@@ -26,7 +26,7 @@ angular.module('simulador').controller('homeController', [
             ultimaGota;
 
         var valoresCalculo = {},
-            fnCalculador = function () {};
+            fnCalculador = angular.noop;
 
         var timer = function () {
             var _seconds = 0,
@@ -149,9 +149,9 @@ angular.module('simulador').controller('homeController', [
 
         function update () {
             fnCalculador(valoresCalculo);
-            updateAgua(valoresCalculo);
 
-            if (agua.height > 1) {
+            if (valoresCalculo.alturaInicial > 0) {
+                updateAgua(valoresCalculo);
                 canvasContext.addElements(ultimaGota = GotaFactory(
                     0, OFFSET_EJE_X, // en PX
                     $scope.tanque.diametro / 2, $scope.tanque.alturaPlataforma, // en MT
@@ -159,6 +159,8 @@ angular.module('simulador').controller('homeController', [
                     $scope.tanque.orificio.angulo,
                     -GRAVEDAD
                 ));
+            } else {
+                fnCalculador = angular.noop;
             }
             $scope.working = $scope.working && ultimaGota.isMoving; //detenido por fuera o porque se terminó de mover la última gota
 
@@ -189,7 +191,7 @@ angular.module('simulador').controller('homeController', [
                 /*Datos Liquido*/
                 densidadLiquido: $scope.tanque.fluido.densidad,
                 alturaInicial: math.eval($scope.tanque.altura + ' * ' + $scope.tanque.nivel + ' / 100'), //alturaInicial se refiere a la altura del liquido desde el fondo del tanque hasta el pelo de agua
-                presionSalida: 0,
+                presionSalida: 101.325, // en Pascales
 
                 /*Datos Tanque*/
                 areaOrificio: calculos.area.eval({d: math.unit($scope.tanque.orificio.diametro, 'cm').toNumber('m') }),
