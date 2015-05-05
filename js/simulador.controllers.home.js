@@ -2,18 +2,24 @@
 
 /* ### CONTROLADOR DE INICIAL ### */
 angular.module('simulador').controller('homeController', [
-    '$scope', '$q', 'math', 'fluidos', 'calculos', 'GRAVEDAD', 'PRESION_ATMOSFERICA', 'FPS', 'ESCALA_PX_MT', 'GotaFactory', 'CanvasContextService', 'CanvasUtils', 'CanvasRectFactory', 'CanvasCircleFactory', 'CanvasImageFactory', 'CanvasSVGFactory', 'CanvasTextFactory',
-    function ($scope, $q, math, fluidos, calculos, GRAVEDAD, PRESION_ATMOSFERICA, FPS, ESCALA_PX_MT, GotaFactory, CanvasContextService, CanvasUtils, CanvasRectFactory, CanvasCircleFactory, CanvasImageFactory, CanvasSVGFactory, CanvasTextFactory) {
+    '$scope', '$q', 'math', 'fluidos', 'calculos', 'GRAVEDAD', 'PRESION_ATMOSFERICA', 'FPS', 'ESCALA_PX_MT', 'GotaFactory', 'CanvasContextService', 'CanvasUtils', 'CanvasRectFactory', 'CanvasImageFactory', 'CanvasSVGFactory', 'CanvasTextFactory',
+    function ($scope, $q, math, fluidos, calculos, GRAVEDAD, PRESION_ATMOSFERICA, FPS, ESCALA_PX_MT, GotaFactory, CanvasContextService, CanvasUtils, CanvasRectFactory, CanvasImageFactory, CanvasSVGFactory, CanvasTextFactory) {
         var OFFSET_EJE_X = 600; //posición, de arriba hacia abajo, del eje X en px dentro del canvas.
 
         var canvasContext = null, /* Elementos dinámicos del canvas */
+            ejeX = CanvasRectFactory({
+                y: OFFSET_EJE_X + 2,
+                height: 4,
+                fillStyle: '#FFFFFF'
+            }),
+            labelsEjeX = [],
             base = CanvasSVGFactory(),
             tanque = CanvasSVGFactory(),
             tapa = CanvasSVGFactory(),
             agua = CanvasRectFactory({
                 fillStyle: 'rgba(0, 0, 255, .75)'
             }),
-            basicElements = [base, tanque, tapa, agua],
+            basicElements = [ejeX, base, tanque, tapa, agua],
             info = angular.element('#output')[0],
             primerGota,
             ultimaGota;
@@ -125,7 +131,7 @@ angular.module('simulador').controller('homeController', [
             tanque.scale.y = $scope.tanque.altura * ESCALA_PX_MT / tanque.height;
             tanque.y = OFFSET_EJE_X - base.height * base.scale.y - tanque.height * tanque.scale.y / 2;
             tapa.y = OFFSET_EJE_X - base.height * base.scale.y - tanque.height * tanque.scale.y - tapa.height * tapa.scale.y / 2;
-            updateViewport();
+            updateViewportAndAxis();
             canvasContext.frame();
         }
 
@@ -138,13 +144,28 @@ angular.module('simulador').controller('homeController', [
             agua.y = tanque.y + tanque.height * tanque.scale.y / 2 - agua.height / 2;
         }
 
-        function updateViewport () {
+        function updateViewportAndAxis () {
             var alturaTotal = Math.ceil($scope.tanque.alturaPlataforma + $scope.tanque.altura + (tapa.height / ESCALA_PX_MT)) * ESCALA_PX_MT,
-                radioTanque = $scope.tanque.diametro / 2,
-                distanciaTotal = Math.ceil(radioTanque + (primerGota ? primerGota.getX() : 0) / ESCALA_PX_MT + 1) * ESCALA_PX_MT,
+                radioTanque = Math.ceil($scope.tanque.diametro / 2) * ESCALA_PX_MT,
+                distanciaTotal = Math.ceil($scope.tanque.diametro + (primerGota ? primerGota.getX() : 0) / ESCALA_PX_MT) * ESCALA_PX_MT,
                 scale = Math.min(600 / alturaTotal, 800 / distanciaTotal);
+            ejeX.x = distanciaTotal / 2 + radioTanque;
+            ejeX.width = distanciaTotal;
+            for(var i = labelsEjeX.length; i * 100 < distanciaTotal; i++) {
+                var label = new CanvasTextFactory({
+                    x: i * 100 + radioTanque + 4,
+                    y: OFFSET_EJE_X + 2,
+                    text: i + 'm |',
+                    font: "bold large sans-serif",
+                    fillStyle: '#FFFFFF',
+                    align: 'right',
+                    baseline: 'top'
+                });
+                labelsEjeX.push(label);
+                canvasContext.addElements(label);
+            }
             canvasContext.setScale(scale);
-            canvasContext.setPosition({ x: -(Math.ceil(radioTanque) * ESCALA_PX_MT + 50) * scale, y: (OFFSET_EJE_X - 600 / scale + 20) * scale});
+            canvasContext.setPosition({ x: -(radioTanque + 50) * scale, y: (OFFSET_EJE_X - 600 / scale + 20) * scale});
         }
 
         function update () {
@@ -160,7 +181,7 @@ angular.module('simulador').controller('homeController', [
                     -GRAVEDAD
                 ));
                 primerGota = primerGota || ultimaGota;
-                updateViewport();
+                updateViewportAndAxis();
             } else {
                 fnCalculador = angular.noop;
             }
@@ -180,6 +201,7 @@ angular.module('simulador').controller('homeController', [
             $scope.working = true;
             primerGota = null;
 
+            labelsEjeX.splice(0, labelsEjeX.length);  // empty array
             canvasContext.getElements().splice(0, canvasContext.getElements().length); // empty array
             canvasContext.addElements(basicElements);
             timer.reset().start();
