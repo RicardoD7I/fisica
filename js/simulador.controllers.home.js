@@ -46,6 +46,7 @@ angular.module('simulador').controller('homeController', [
                 if (primerGota) {
                     outputVelMax.textContent = velocidadMaxima;
                     outputDistMax.textContent =  primerGota.getX() / ESCALA_PX_MT;
+                    outputVelAct.textContent = math.number(valoresCalculo.velocidadSalida);
                 }
             }
 
