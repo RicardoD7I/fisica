@@ -33,9 +33,13 @@
     </div>
 </nav>
 
-<div class="container after-nav">
-    <canvas id="canvasSimulador" class="simulador" width="800" height="600" data-fps="FPS"></canvas>
-    <span id="output"></span>
+<div class="container after-nav simulator-container">
+    <canvas id="canvasSimulador" class="simulator" width="800" height="600" data-fps="FPS"></canvas>
+    <div class="output">
+        <div class="alert alert-warning">
+            <span id="output" class="h4">Inicializando...</span>
+        </div>
+    </div>
 </div>
 
 <footer class="clearfix">

@@ -28,6 +28,9 @@ angular.module('simulador').factory('GotaFactory', [
 
             var _instance = {
                 isMoving: true,
+                getX : function () {
+                    return circle.x;
+                },
                 paint: paintAndUpdate
             };
 

@@ -13,16 +13,9 @@ angular.module('simulador').controller('homeController', [
             agua = CanvasRectFactory({
                 fillStyle: 'rgba(0, 0, 255, .75)'
             }),
-            info = CanvasTextFactory({
-                x: 790,
-                y: 10,
-                text: 'Detenido',
-                font: "bold large sans-serif",
-                fillStyle: 'red',
-                align: 'right',
-                baseline: 'top'
-            }),
-            basicElements = [base, tanque, tapa, agua, info],
+            basicElements = [base, tanque, tapa, agua],
+            info = angular.element('#output')[0],
+            primerGota,
             ultimaGota;
 
         var valoresCalculo = {},
@@ -35,21 +28,21 @@ angular.module('simulador').controller('homeController', [
 
             return timer = {
                 start: function () {
-                    info.text = "Tiempo: " + _seconds + " seg";
+                    info.textContent = 'Tiempo: ' + _seconds + ' seg';
                     _interval = setInterval(function () {
                         _seconds++;
-                        info.text = "Tiempo: " + _seconds + " seg";
+                        info.textContent = 'Tiempo: ' + _seconds + ' seg';
                     }, 1000);
                     return timer;
                 },
                 stop: function () {
                     !!_interval && clearInterval(_interval);
-                    info.text = "Detenido en: " + _seconds + " seg";
+                    info.textContent = 'Detenido en: ' + _seconds + ' seg';
                     return timer;
                 },
                 reset: function () {
                     _seconds = 0;
-                    !_interval && (info.text = "Detenido");
+                    !_interval && (info.textContent = 'Detenido');
                     return timer;
                 }
             }
@@ -88,8 +81,6 @@ angular.module('simulador').controller('homeController', [
                 }),
                 fluidosResponse: fluidos()
             }).then(function (resources) {
-                $scope.loadingResources = false;
-
                 // init enums
                 $scope.fluidos = resources.fluidosResponse.data;
                 if (!$scope.tanque.fluido) {
@@ -121,6 +112,8 @@ angular.module('simulador').controller('homeController', [
                 canvasContext = resources.context;
                 canvasContext.addElements(basicElements);
                 updateTanque();
+                $scope.loadingResources = false;
+                info.textContent = 'Detenido';
             })
         }
 
@@ -132,6 +125,7 @@ angular.module('simulador').controller('homeController', [
             tanque.scale.y = $scope.tanque.altura * ESCALA_PX_MT / tanque.height;
             tanque.y = OFFSET_EJE_X - base.height * base.scale.y - tanque.height * tanque.scale.y / 2;
             tapa.y = OFFSET_EJE_X - base.height * base.scale.y - tanque.height * tanque.scale.y - tapa.height * tapa.scale.y / 2;
+            updateViewport();
             canvasContext.frame();
         }
 
@@ -142,6 +136,15 @@ angular.module('simulador').controller('homeController', [
                 pixeles: tanque.height * tanque.scale.y
             }));
             agua.y = tanque.y + tanque.height * tanque.scale.y / 2 - agua.height / 2;
+        }
+
+        function updateViewport () {
+            var alturaTotal = Math.ceil($scope.tanque.alturaPlataforma + $scope.tanque.altura + (tapa.height / ESCALA_PX_MT)) * ESCALA_PX_MT,
+                radioTanque = $scope.tanque.diametro / 2,
+                distanciaTotal = Math.ceil(radioTanque + (primerGota ? primerGota.getX() : 0) / ESCALA_PX_MT + 1) * ESCALA_PX_MT,
+                scale = Math.min(600 / alturaTotal, 800 / distanciaTotal);
+            canvasContext.setScale(scale);
+            canvasContext.setPosition({ x: -(Math.ceil(radioTanque) * ESCALA_PX_MT + 50) * scale, y: (OFFSET_EJE_X - 600 / scale + 20) * scale});
         }
 
         function update () {
@@ -156,6 +159,8 @@ angular.module('simulador').controller('homeController', [
                     $scope.tanque.orificio.angulo,
                     -GRAVEDAD
                 ));
+                primerGota = primerGota || ultimaGota;
+                updateViewport();
             } else {
                 fnCalculador = angular.noop;
             }
@@ -173,6 +178,7 @@ angular.module('simulador').controller('homeController', [
 
         $scope.startSimulation = function () {
             $scope.working = true;
+            primerGota = null;
 
             canvasContext.getElements().splice(0, canvasContext.getElements().length); // empty array
             canvasContext.addElements(basicElements);
