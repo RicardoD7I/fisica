@@ -4,24 +4,23 @@ angular.module('simulador').service('calculos', [
     'math', 'FPS',
     function (math, FPS) {
         /* ESTADO TANQUE CON O SIN TAPA */
-        var _calculoCaudal = math.compile("areaOrificio * velocidadSalida");
-        var _calcularAltura = math.compile("((altura * baseTanque) - caudal / " + FPS + ") / baseTanque");
+        var _calculoCaudal = math.compile("areaOrificio * velocidadSalida"),
+            _calcularAltura = math.compile("((altura * baseTanque) - caudal / " + FPS + ") / baseTanque");
 
         /* ESTADO TANQUE SOLO CON TAPA */
-        var _calculoPresionGas = math.compile("densidadGas * gravedad * alturaGas"),
-            _calcularVelocidadConGas = math.compile("sqrt( (( 2 * ( presionGas - presionSalida ) ) / densidadLiquido) + 2 * gravedad * alturaInicial)");
+        var _calculoPresionGas = math.compile("densidadGas * gravedad * alturaGas"),// TODO: candidato a remover
+            _calcularVelocidadConGas = math.compile("sqrt(((2 * (presionGas - presionSalida)) / densidadLiquido) + 2 * gravedad * alturaInicial)");
 
         /* ESTADO TANQUE SIN SIN TAPA */
         var _calcularVelocidadSinGas = math.compile("sqrt(2 *  gravedad * alturaInicial)");
 
         /* OTRAS FUNCIONES AUXILIARES */
-        var _calculoArea = math.compile("( ( d / 2 ) ^ 2 ) * PI"),
-             _calculoAlturaTanquePX = math.compile("alturaFluido / alturaTanque * pixeles");
+        var _calculoArea = math.compile("((d / 2) ^ 2) * PI"),
+            _calculoAlturaTanquePX = math.compile("alturaFluido / alturaTanque * pixeles");
 
         /* -------- */
         this.estadoTanque = {
             conTapa: function (valoresCalculo) {
-                valoresCalculo.presionGas = _calculoPresionGas.eval(valoresCalculo);
                 valoresCalculo.velocidadSalida = _calcularVelocidadConGas.eval(valoresCalculo);
                 valoresCalculo.alturaInicial = _calcularAltura.eval({
                     altura: valoresCalculo.alturaInicial,

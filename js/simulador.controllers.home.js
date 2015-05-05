@@ -2,8 +2,8 @@
 
 /* ### CONTROLADOR DE INICIAL ### */
 angular.module('simulador').controller('homeController', [
-    '$scope', '$q', 'math', 'gases', 'fluidos', 'calculos', 'GRAVEDAD', 'FPS', 'ESCALA_PX_MT', 'GotaFactory', 'CanvasContextService', 'CanvasUtils', 'CanvasRectFactory', 'CanvasCircleFactory', 'CanvasImageFactory', 'CanvasSVGFactory', 'CanvasTextFactory',
-    function ($scope, $q, math, gases, fluidos, calculos, GRAVEDAD, FPS, ESCALA_PX_MT, GotaFactory, CanvasContextService, CanvasUtils, CanvasRectFactory, CanvasCircleFactory, CanvasImageFactory, CanvasSVGFactory, CanvasTextFactory) {
+    '$scope', '$q', 'math', 'fluidos', 'calculos', 'GRAVEDAD', 'PRESION_ATMOSFERICA', 'FPS', 'ESCALA_PX_MT', 'GotaFactory', 'CanvasContextService', 'CanvasUtils', 'CanvasRectFactory', 'CanvasCircleFactory', 'CanvasImageFactory', 'CanvasSVGFactory', 'CanvasTextFactory',
+    function ($scope, $q, math, fluidos, calculos, GRAVEDAD, PRESION_ATMOSFERICA, FPS, ESCALA_PX_MT, GotaFactory, CanvasContextService, CanvasUtils, CanvasRectFactory, CanvasCircleFactory, CanvasImageFactory, CanvasSVGFactory, CanvasTextFactory) {
         var OFFSET_EJE_X = 600; //posición, de arriba hacia abajo, del eje X en px dentro del canvas.
 
         var canvasContext = null, /* Elementos dinámicos del canvas */
@@ -58,17 +58,16 @@ angular.module('simulador').controller('homeController', [
         $scope.FPS = FPS;
 
         $scope.tanque = {
-            altura: 2,
-            diametro: 2, // en CM
+            altura: 2, // en Metros
+            diametro: 2, // en Metros
             nivel: 50, // porcentaje: 0 a 100
             tapa: false,
-            gas: null,
-            alturaPlataforma: 3.6,
+            presionGas: PRESION_ATMOSFERICA, // en Pascales
+            alturaPlataforma: 3.6, // en Metros
             orificio: {
                 ubicacion: 'LATERAL',
-                diametro: 30,
-                altura: 0,
-                largo: 0,
+                diametro: 30, // en CM
+                altura: 0, // en Metros
                 angulo: 0
             },
             fluido: null
@@ -87,13 +86,11 @@ angular.module('simulador').controller('homeController', [
                     tanque: CanvasUtils.loadImageURL('img/tanque.svg'),
                     tapa: CanvasUtils.loadImageURL('img/tapa.svg')
                 }),
-                gasesResponse: gases(),
                 fluidosResponse: fluidos()
             }).then(function (resources) {
                 $scope.loadingResources = false;
 
                 // init enums
-                $scope.gases = resources.gasesResponse.data;
                 $scope.fluidos = resources.fluidosResponse.data;
                 if (!$scope.tanque.fluido) {
                     $scope.tanque.fluido = $scope.fluidos[0];
@@ -185,13 +182,12 @@ angular.module('simulador').controller('homeController', [
                 gravedad: GRAVEDAD,
 
                 /*Datos gas*/
-                densidadGas: $scope.tanque.gas ? $scope.tanque.gas.densidad : 0, // TODO: parche, checkear luego
-                alturaGas: math.eval($scope.tanque.altura + ' * (1 - (' + $scope.tanque.nivel + ' / 100))'),
+                presionGas: $scope.tanque.tapa ? $scope.tanque.presionGas : PRESION_ATMOSFERICA,
 
                 /*Datos Liquido*/
                 densidadLiquido: $scope.tanque.fluido.densidad,
                 alturaInicial: math.eval($scope.tanque.altura + ' * ' + $scope.tanque.nivel + ' / 100'), //alturaInicial se refiere a la altura del liquido desde el fondo del tanque hasta el pelo de agua
-                presionSalida: 101.325, // en Pascales
+                presionSalida: PRESION_ATMOSFERICA,
 
                 /*Datos Tanque*/
                 areaOrificio: calculos.area.eval({d: math.unit($scope.tanque.orificio.diametro, 'cm').toNumber('m') }),
