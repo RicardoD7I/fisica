@@ -9,10 +9,10 @@ angular.module('simulador').service('calculos', [
 
         /* ESTADO TANQUE SOLO CON TAPA */
         var _calculoPresionGas = math.compile("densidadGas * gravedad * alturaGas"),// TODO: candidato a remover
-            _calcularVelocidadConGas = math.compile("sqrt(((2 * (presionGas - presionSalida)) / densidadLiquido) + 2 * gravedad * alturaInicial)");
+            _calcularVelocidadConGas = math.compile("sqrt(((2 * (presionGas - presionSalida)) / densidadLiquido) + 2 * gravedad * (alturaInicial - alturaTubo))");
 
         /* ESTADO TANQUE SIN SIN TAPA */
-        var _calcularVelocidadSinGas = math.compile("sqrt(2 *  gravedad * alturaInicial)");
+        var _calcularVelocidadSinGas = math.compile("sqrt(2 *  gravedad * (alturaInicial - alturaTubo))");
 
         /* OTRAS FUNCIONES AUXILIARES */
         var _calculoArea = math.compile("((d / 2) ^ 2) * PI"),

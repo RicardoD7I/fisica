@@ -147,11 +147,11 @@ angular.module('simulador').controller('homeController', [
         function update () {
             fnCalculador(valoresCalculo);
 
-            if (valoresCalculo.alturaInicial > 0) {
+            if (valoresCalculo.alturaInicial > valoresCalculo.alturaTubo) {
                 updateAgua(valoresCalculo);
                 canvasContext.addElements(ultimaGota = GotaFactory(
                     0, OFFSET_EJE_X, // en PX
-                    $scope.tanque.diametro / 2, $scope.tanque.alturaPlataforma, // en MT
+                    valoresCalculo.salidaGota.x, valoresCalculo.salidaGota.y, // en Metros
                     valoresCalculo.velocidadSalida,
                     $scope.tanque.orificio.angulo,
                     -GRAVEDAD
@@ -191,11 +191,15 @@ angular.module('simulador').controller('homeController', [
 
                 /*Datos Tanque*/
                 areaOrificio: calculos.area.eval({d: math.unit($scope.tanque.orificio.diametro, 'cm').toNumber('m') }),
-                alturaTubo: $scope.tanque.orificio.altura,
+                alturaTubo: ($scope.tanque.orificio.ubicacion == 'LATERAL') ? $scope.tanque.orificio.altura : 0,
                 areaBaseTanque: calculos.area.eval({d: parseFloat($scope.tanque.diametro)}),
 
                 /*Salida*/
-                velocidadSalida: 0
+                velocidadSalida: 0,
+                salidaGota: {
+                    x: ($scope.tanque.orificio.ubicacion == 'LATERAL') ? $scope.tanque.diametro / 2 : 0,
+                    y: $scope.tanque.alturaPlataforma + $scope.tanque.orificio.altura
+                }
             };
 
             updateAgua(valoresCalculo);
