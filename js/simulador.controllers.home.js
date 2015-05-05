@@ -20,35 +20,55 @@ angular.module('simulador').controller('homeController', [
                 fillStyle: 'rgba(0, 0, 255, .75)'
             }),
             basicElements = [ejeX, base, tanque, tapa, agua],
-            info = angular.element('#output')[0],
+            status = angular.element('#status')[0],
             primerGota,
-            ultimaGota;
+            ultimaGota,
+            velocidadMaxima = null;
 
         var valoresCalculo = {},
             fnCalculador = angular.noop;
 
         var timer = function () {
-            var _seconds = 0,
+            var _startTime,
                 _interval = null,
+                outputTiempo = angular.element('#tiempo')[0],
+                outputNivel = angular.element('#nivel')[0],
+                outputVelMax = angular.element('#velMax')[0],
+                outputDistMax = angular.element('#distMax')[0],
+                outputVelAct = angular.element('#velAct')[0],
+                outputDistAct = angular.element('#distAct')[0],
                 timer;
+
+            function updateOutput(statusMessage) {
+                status.textContent = statusMessage;
+                outputTiempo.textContent = (new Date().getTime() - _startTime) / 1000;
+                outputNivel.textContent = valoresCalculo.alturaInicial / $scope.tanque.altura;
+                if (primerGota) {
+                    outputVelMax.textContent = velocidadMaxima;
+                    outputDistMax.textContent =  primerGota.getX() / ESCALA_PX_MT;
+                }
+            }
 
             return timer = {
                 start: function () {
-                    info.textContent = 'Tiempo: ' + _seconds + ' seg';
+                    _startTime = new Date().getTime();
+                    status.textContent = 'Simulando...';
+                    outputTiempo.textContent = outputNivel.textContent =
+                        outputVelMax.textContent = outputDistMax.textContent =
+                            outputVelAct.textContent = outputDistAct.textContent = 0;
+
                     _interval = setInterval(function () {
-                        _seconds++;
-                        info.textContent = 'Tiempo: ' + _seconds + ' seg';
+                        updateOutput('Simulando...');
                     }, 1000);
                     return timer;
                 },
                 stop: function () {
                     !!_interval && clearInterval(_interval);
-                    info.textContent = 'Detenido en: ' + _seconds + ' seg';
+                    updateOutput('Detenido.');
                     return timer;
                 },
                 reset: function () {
-                    _seconds = 0;
-                    !_interval && (info.textContent = 'Detenido');
+                    !_interval && (status.textContent = 'Detenido.');
                     return timer;
                 }
             }
@@ -119,7 +139,7 @@ angular.module('simulador').controller('homeController', [
                 canvasContext.addElements(basicElements);
                 updateTanque();
                 $scope.loadingResources = false;
-                info.textContent = 'Detenido';
+                status.textContent = 'Detenido';
             })
         }
 
@@ -181,6 +201,7 @@ angular.module('simulador').controller('homeController', [
                     -GRAVEDAD
                 ));
                 primerGota = primerGota || ultimaGota;
+                velocidadMaxima = velocidadMaxima || math.number(valoresCalculo.velocidadSalida);
                 updateViewportAndAxis();
             } else {
                 fnCalculador = angular.noop;
@@ -199,6 +220,7 @@ angular.module('simulador').controller('homeController', [
 
         $scope.startSimulation = function () {
             $scope.working = true;
+            velocidadMaxima = null;
             primerGota = null;
 
             labelsEjeX.splice(0, labelsEjeX.length);  // empty array

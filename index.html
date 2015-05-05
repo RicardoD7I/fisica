@@ -37,7 +37,33 @@
     <canvas id="canvasSimulador" class="simulator" width="800" height="600" data-fps="FPS"></canvas>
     <div class="output">
         <div class="alert alert-warning">
-            <span id="output" class="h4">Inicializando...</span>
+            <span id="status" class="h4">Inicializando...</span>
+            <table >
+                <tr>
+                    <th>Tiempo:</th>
+                    <td><span id="tiempo">0</span>&nbsp;s</td>
+                </tr>
+                <tr>
+                    <th>Nivel del agua:</th>
+                    <td><span id="nivel">0</span>&nbsp;%</td>
+                </tr>
+                <tr>
+                    <th>Velocidad m&aacute;xima:</th>
+                    <td><span id="velMax">0</span>&nbsp;m/s</td>
+                </tr>
+                <tr>
+                    <th>Distancia m&aacute;xima:</th>
+                    <td><span id="distMax">0</span>&nbsp;m</td>
+                </tr>
+                <tr>
+                    <th>Velocidad actual:</th>
+                    <td><span id="velAct">0</span>&nbsp;m/s</td>
+                </tr>
+                <tr>
+                    <th>Distancia actual::</th>
+                    <td><span id="distAct">0</span>&nbsp;m</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
@@ -48,7 +74,7 @@
     </div>
 </footer>
 
-<!-- Librerías de terceros -->
+<!-- LibrerÃ­as de terceros -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/angular-animate/angular-animate.min.js"></script>
@@ -56,13 +82,13 @@
 <script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
 <script src="bower_components/mathjs/dist/math.min.js"></script>
 
-<!-- Librerías propias -->
+<!-- LibrerÃ­as propias -->
 <script src="js/canvas.js" type="text/javascript"></script>
 <script src="js/canvas.services.js" type="text/javascript"></script>
 <script src="js/canvas.factories.js" type="text/javascript"></script>
 <script src="js/canvas.directives.js" type="text/javascript"></script>
 
-<!-- Código de la aplicación  -->
+<!-- CÃ³digo de la aplicaciÃ³n  -->
 <script src="js/simulador.app.js"></script>
 <script src="js/simulador.directives.js"></script>
 <script src="js/simulador.factories.js"></script>
