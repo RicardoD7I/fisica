@@ -40,5 +40,9 @@ angular.module('simulador').service('calculos', [
         };
         this.area = _calculoArea;
         this.alturaTanquePX = _calculoAlturaTanquePX;
+        this.truncate = function (value, nDecimals) {
+            var base = Math.pow(10, nDecimals);
+            return Math.floor(value * base) / base;
+        }
     }
 ]);

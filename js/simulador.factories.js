@@ -12,11 +12,13 @@ angular.module('simulador').factory('fluidos', [
 angular.module('simulador').factory('GotaFactory', [
     'CanvasCircleFactory', 'FPS', 'ESCALA_PX_MT',
     function (CanvasCircleFactory, FPS, ESCALA_PX_MT) {
-        return function (origenXpx, origenYpx, xInicialMt, yInicialMt, velocidadInicial, anguloTubo, gravedad) {
+        return function (origenXpx, origenYpx, xInicialMt, yInicialMt, velocidadInicial, anguloTubo, gravedad, maxDistanceCallback, progressionDistanceCallback) {
             var x = xInicialMt,
                 y = yInicialMt,
-                velX = velocidadInicial * Math.cos(anguloTubo * (Math.PI / 180)),
-                velY = velocidadInicial * Math.sin(anguloTubo * (Math.PI / 180)),
+                velX0 = velocidadInicial * Math.cos(anguloTubo * (Math.PI / 180)),
+                velY0 = velocidadInicial * Math.sin(anguloTubo * (Math.PI / 180)),
+                velX = velX0,
+                velY = velY0,
                 deltaTiempo = 1 / FPS;
 
             var circle = CanvasCircleFactory({
@@ -29,7 +31,7 @@ angular.module('simulador').factory('GotaFactory', [
             var _instance = {
                 isMoving: true,
                 getX : function () {
-                    return circle.x;
+                    return x;
                 },
                 paint: paintAndUpdate
             };
@@ -41,9 +43,12 @@ angular.module('simulador').factory('GotaFactory', [
                 x = _posicionFinal(x, velX, 0, deltaTiempo);
                 y = _posicionFinal(y, velY, gravedad, deltaTiempo);
                 if (y < 0) {
-                    y = 0; // TODO: al ubicar Y en 0, ubicar X en donde corresponde.
+                    y = 0;
+                    x = _posicionFinal(xInicialMt, velX0, 0, _tiempoFinal(yInicialMt, velY0, gravedad));
                     _instance.paint = circle.paint;
                     _instance.isMoving = false;
+                    maxDistanceCallback(x - xInicialMt);
+                    progressionDistanceCallback(x - xInicialMt);
                 }
                 velX = _velocidadFinal(velX, 0, deltaTiempo);
                 velY = _velocidadFinal(velY, gravedad, deltaTiempo);
@@ -51,12 +56,19 @@ angular.module('simulador').factory('GotaFactory', [
                 circle.y = origenYpx - y * ESCALA_PX_MT;
             }
 
-            function _posicionFinal(posicionInicial, velocidad, aceleracion, tiempo) {
-                return posicionInicial + (velocidad * tiempo) + (.5 * aceleracion * Math.pow(tiempo, 2));
+            function _posicionFinal(posicionInicial, velocidadInicial, aceleracion, tiempo) {
+                return posicionInicial + (velocidadInicial * tiempo) + (.5 * aceleracion * Math.pow(tiempo, 2));
             }
 
             function _velocidadFinal(velocidad, aceleracion, tiempo) {
                 return velocidad + aceleracion * tiempo;
+            }
+
+            function _tiempoFinal (posicionInicial, velocidadInicial, aceleracion) {
+                return Math.max(
+                    (-velocidadInicial - Math.sqrt(Math.pow(velocidadInicial, 2) - 2 * aceleracion * posicionInicial)) / aceleracion,
+                    (-velocidadInicial + Math.sqrt(Math.pow(velocidadInicial, 2) - 2 * aceleracion * posicionInicial)) / aceleracion
+                );
             }
         }
     }

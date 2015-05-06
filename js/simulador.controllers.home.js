@@ -21,9 +21,11 @@ angular.module('simulador').controller('homeController', [
             }),
             basicElements = [ejeX, base, tanque, tapa, agua],
             status = angular.element('#status')[0],
-            primerGota,
             ultimaGota,
-            velocidadMaxima = null;
+            velocidadMaxima = null,
+            distanciaMaxima = null,
+            velocidadActual = null,
+            distanciaActual = null;
 
         var valoresCalculo = {},
             fnCalculador = angular.noop;
@@ -41,18 +43,17 @@ angular.module('simulador').controller('homeController', [
 
             function updateOutput(statusMessage) {
                 status.textContent = statusMessage;
-                outputTiempo.textContent = (new Date().getTime() - _startTime) / 1000;
-                outputNivel.textContent = valoresCalculo.alturaInicial / $scope.tanque.altura;
-                if (primerGota) {
-                    outputVelMax.textContent = velocidadMaxima;
-                    outputDistMax.textContent =  primerGota.getX() / ESCALA_PX_MT;
-                    outputVelAct.textContent = math.number(valoresCalculo.velocidadSalida);
-                }
+                outputTiempo.textContent = (Date.now() - _startTime) / 1000;
+                outputNivel.textContent = calculos.truncate(valoresCalculo.alturaInicial / $scope.tanque.altura * 100, 3);
+                outputVelMax.textContent = calculos.truncate(velocidadMaxima || valoresCalculo.velocidadSalida, 3);
+                outputDistMax.textContent = calculos.truncate(distanciaMaxima || distanciaActual, 3);
+                outputVelAct.textContent = calculos.truncate(math.number(valoresCalculo.velocidadSalida), 3);
+                outputDistAct.textContent = calculos.truncate(distanciaActual || 0, 3);
             }
 
             return timer = {
                 start: function () {
-                    _startTime = new Date().getTime();
+                    _startTime = Date.now();
                     status.textContent = 'Simulando...';
                     outputTiempo.textContent = outputNivel.textContent =
                         outputVelMax.textContent = outputDistMax.textContent =
@@ -65,11 +66,11 @@ angular.module('simulador').controller('homeController', [
                 },
                 stop: function () {
                     !!_interval && clearInterval(_interval);
-                    updateOutput('Detenido.');
+                    updateOutput('Detenido');
                     return timer;
                 },
                 reset: function () {
-                    !_interval && (status.textContent = 'Detenido.');
+                    !_interval && (status.textContent = 'Detenido');
                     return timer;
                 }
             }
@@ -168,7 +169,7 @@ angular.module('simulador').controller('homeController', [
         function updateViewportAndAxis () {
             var alturaTotal = Math.ceil($scope.tanque.alturaPlataforma + $scope.tanque.altura + (tapa.height / ESCALA_PX_MT)) * ESCALA_PX_MT,
                 radioTanque = Math.ceil($scope.tanque.diametro / 2) * ESCALA_PX_MT,
-                distanciaTotal = Math.ceil($scope.tanque.diametro + (primerGota ? primerGota.getX() : 0) / ESCALA_PX_MT) * ESCALA_PX_MT,
+                distanciaTotal = Math.ceil($scope.tanque.diametro + (distanciaMaxima || 0)) * ESCALA_PX_MT,
                 scale = Math.min(600 / alturaTotal, 800 / distanciaTotal);
             ejeX.x = distanciaTotal / 2 + radioTanque;
             ejeX.width = distanciaTotal;
@@ -199,9 +200,14 @@ angular.module('simulador').controller('homeController', [
                     valoresCalculo.salidaGota.x, valoresCalculo.salidaGota.y, // en Metros
                     valoresCalculo.velocidadSalida,
                     $scope.tanque.orificio.angulo,
-                    -GRAVEDAD
+                    -GRAVEDAD,
+                    function (maxDistance) {
+                        distanciaMaxima = distanciaMaxima || maxDistance;
+                    },
+                    function (currentDistance) {
+                        distanciaActual = currentDistance;
+                    }
                 ));
-                primerGota = primerGota || ultimaGota;
                 velocidadMaxima = velocidadMaxima || math.number(valoresCalculo.velocidadSalida);
                 updateViewportAndAxis();
             } else {
@@ -222,7 +228,10 @@ angular.module('simulador').controller('homeController', [
         $scope.startSimulation = function () {
             $scope.working = true;
             velocidadMaxima = null;
-            primerGota = null;
+            velocidadMaxima = null;
+            distanciaMaxima = null;
+            velocidadActual = null;
+            distanciaActual = null;
 
             labelsEjeX.splice(0, labelsEjeX.length);  // empty array
             canvasContext.getElements().splice(0, canvasContext.getElements().length); // empty array
