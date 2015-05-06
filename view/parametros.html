@@ -63,7 +63,7 @@
                                 <label class="col-sm-5 control-label">Ubicaci&oacute;n del orificio:</label>
                                 <div class="col-sm-7">
                                     <div class="radio"><label><input type="radio" name="orificioUbicacion" ng-model="tanque.orificio.ubicacion" ng-required="true" value="LATERAL" ng-change="tanque.orificio.angulo = 0"/>Lateral del tanque</label></div>
-                                    <div class="radio"><label><input type="radio" name="orificioUbicacion" ng-model="tanque.orificio.ubicacion" ng-required="true" value="DEBAJO" ng-change="tanque.orificio.angulo = -90"/>Debajo del tanque</label></div>
+                                    <div class="radio"><label><input type="radio" name="orificioUbicacion" ng-model="tanque.orificio.ubicacion" ng-required="true" value="DEBAJO" ng-change="tanque.orificio.angulo = -90; tanque.orificio.altura = 0;"/>Debajo del tanque</label></div>
                                 </div>
                             </div>
 
@@ -77,7 +77,7 @@
                             <div class="form-group" ng-show="tanque.orificio.ubicacion == 'LATERAL'">
                                 <label class="col-sm-5 control-label" for="orificioAltura">Altura del orificio:</label>
                                 <div class="col-sm-7">
-                                    <input type="number" name="orificioAltura" id="orificioAltura" ng-model="tanque.orificio.altura" ng-required="true" number-range data-min="0" data-step="0.1" data-unit="m"/>
+                                    <input type="number" name="orificioAltura" id="orificioAltura" ng-model="tanque.orificio.altura" ng-required="true" number-range data-min="0" data-max="tanque.altura * tanque.nivel / 100" data-step="0.1" data-unit="m"/>
                                 </div>
                             </div>
 

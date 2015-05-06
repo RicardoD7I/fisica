@@ -27,6 +27,9 @@ angular.module('simulador').service('calculos', [
                     baseTanque: valoresCalculo.areaBaseTanque,
                     caudal: _calculoCaudal.eval(valoresCalculo)
                 });
+                if (valoresCalculo.alturaInicial < 0) {
+                    valoresCalculo.alturaInicial = 0;
+                }
             },
 
             sinTapa: function (valoresCalculo) {
@@ -36,6 +39,9 @@ angular.module('simulador').service('calculos', [
                     baseTanque: valoresCalculo.areaBaseTanque,
                     caudal: _calculoCaudal.eval(valoresCalculo)
                 });
+                if (valoresCalculo.alturaInicial < 0) {
+                    valoresCalculo.alturaInicial = 0;
+                }
             }
         };
         this.area = _calculoArea;

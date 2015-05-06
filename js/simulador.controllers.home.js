@@ -21,6 +21,7 @@ angular.module('simulador').controller('homeController', [
             }),
             basicElements = [ejeX, base, tanque, tapa, agua],
             status = angular.element('#status')[0],
+            primerGota,
             ultimaGota,
             velocidadMaxima = null,
             distanciaMaxima = null,
@@ -153,29 +154,28 @@ angular.module('simulador').controller('homeController', [
             tanque.scale.y = $scope.tanque.altura * ESCALA_PX_MT / tanque.height;
             tanque.y = OFFSET_EJE_X - base.height * base.scale.y - tanque.height * tanque.scale.y / 2;
             tapa.y = OFFSET_EJE_X - base.height * base.scale.y - tanque.height * tanque.scale.y - tapa.height * tapa.scale.y / 2;
+            updateAgua($scope.tanque.altura * $scope.tanque.nivel / 100);
+            resetEnvironment();
             updateViewportAndAxis();
             canvasContext.frame();
         }
 
-        function updateAgua (valoresCalculo) {
+        function updateAgua (alturaAgua) {
             agua.height = math.number(calculos.alturaTanquePX.eval({
-                alturaFluido: valoresCalculo.alturaInicial,
+                alturaFluido: alturaAgua,
                 alturaTanque: $scope.tanque.altura,
                 pixeles: tanque.height * tanque.scale.y
             }));
             agua.y = tanque.y + tanque.height * tanque.scale.y / 2 - agua.height / 2;
         }
 
-        function updateViewportAndAxis () {
-            var alturaTotal = Math.ceil($scope.tanque.alturaPlataforma + $scope.tanque.altura + (tapa.height / ESCALA_PX_MT)) * ESCALA_PX_MT,
-                radioTanque = Math.ceil($scope.tanque.diametro / 2) * ESCALA_PX_MT,
-                distanciaTotal = Math.ceil($scope.tanque.diametro + (distanciaMaxima || 0)) * ESCALA_PX_MT,
-                scale = Math.min(600 / alturaTotal, 800 / distanciaTotal);
-            ejeX.x = distanciaTotal / 2 + radioTanque;
-            ejeX.width = distanciaTotal;
-            for(var i = labelsEjeX.length; i * 100 < distanciaTotal; i++) {
+        function buildHorizontalAxis() {
+            var radioTanque = Math.ceil($scope.tanque.diametro / 2 * ESCALA_PX_MT);
+            ejeX.width = Math.ceil(distanciaMaxima || 0) * ESCALA_PX_MT;
+            ejeX.x = radioTanque + ejeX.width / 2;
+            for(var i = labelsEjeX.length; i * 100 <= ejeX.width; i++) {
                 var label = new CanvasTextFactory({
-                    x: i * 100 + radioTanque + 4,
+                    x: i * 100 + radioTanque + 2,
                     y: OFFSET_EJE_X + 2,
                     text: i + 'm |',
                     font: "bold large sans-serif",
@@ -186,6 +186,15 @@ angular.module('simulador').controller('homeController', [
                 labelsEjeX.push(label);
                 canvasContext.addElements(label);
             }
+        }
+
+        function updateViewportAndAxis () {
+            $scope.tanque.orificio.ubicacion == 'LATERAL' && buildHorizontalAxis();
+            var alturaTotal = Math.ceil($scope.tanque.alturaPlataforma + $scope.tanque.altura + (tapa.height / ESCALA_PX_MT)) * ESCALA_PX_MT,
+                anchoTotal = Math.ceil($scope.tanque.diametro + (distanciaMaxima || 0)) * ESCALA_PX_MT + 100,
+                radioTanque = Math.ceil($scope.tanque.diametro / 2 * ESCALA_PX_MT),
+                scale = Math.min(600 / alturaTotal, 800 / anchoTotal);
+
             canvasContext.setScale(scale);
             canvasContext.setPosition({ x: -(radioTanque + 50) * scale, y: (OFFSET_EJE_X - 600 / scale + 20) * scale});
         }
@@ -194,48 +203,49 @@ angular.module('simulador').controller('homeController', [
             fnCalculador(valoresCalculo);
 
             if (valoresCalculo.alturaInicial > valoresCalculo.alturaTubo) {
-                updateAgua(valoresCalculo);
+                updateAgua(valoresCalculo.alturaInicial);
                 canvasContext.addElements(ultimaGota = GotaFactory(
                     0, OFFSET_EJE_X, // en PX
                     valoresCalculo.salidaGota.x, valoresCalculo.salidaGota.y, // en Metros
                     valoresCalculo.velocidadSalida,
                     $scope.tanque.orificio.angulo,
                     -GRAVEDAD,
-                    function (maxDistance) {
-                        distanciaMaxima = distanciaMaxima || maxDistance;
-                    },
                     function (currentDistance) {
                         distanciaActual = currentDistance;
                     }
                 ));
-                velocidadMaxima = velocidadMaxima || math.number(valoresCalculo.velocidadSalida);
-                updateViewportAndAxis();
             } else {
                 fnCalculador = angular.noop;
             }
-            $scope.working = $scope.working && ultimaGota.isMoving; //detenido por fuera o porque se terminó de mover la última gota
+            velocidadMaxima = velocidadMaxima || math.number(valoresCalculo.velocidadSalida);
+            if ((primerGota = primerGota || ultimaGota) && primerGota.isMoving) {
+                distanciaMaxima = primerGota.getXf();
+                updateViewportAndAxis();
+            }
+            $scope.working = $scope.working && ultimaGota && ultimaGota.isMoving; //detenido por fuera o porque se terminó de mover la última gota
 
             if ($scope.working) {
                 canvasContext.frame(update);
             } else {
                 timer.stop();
                 canvasContext.frame();
+                $scope.$applyAsync();
             }
+        }
+
+        function resetEnvironment() {
+            primerGota = ultimaGota = velocidadMaxima = distanciaMaxima = velocidadActual = distanciaActual = null;
+            labelsEjeX.splice(0, labelsEjeX.length);  // empty array
+            canvasContext.getElements().splice(0, canvasContext.getElements().length); // empty array
+            canvasContext.addElements(basicElements);
         }
 
         $scope.updateTanque = updateTanque;
 
         $scope.startSimulation = function () {
             $scope.working = true;
-            velocidadMaxima = null;
-            velocidadMaxima = null;
-            distanciaMaxima = null;
-            velocidadActual = null;
-            distanciaActual = null;
+            resetEnvironment();
 
-            labelsEjeX.splice(0, labelsEjeX.length);  // empty array
-            canvasContext.getElements().splice(0, canvasContext.getElements().length); // empty array
-            canvasContext.addElements(basicElements);
             timer.reset().start();
 
             valoresCalculo = {
@@ -262,7 +272,7 @@ angular.module('simulador').controller('homeController', [
                 }
             };
 
-            updateAgua(valoresCalculo);
+            updateAgua(valoresCalculo.alturaInicial);
 
             fnCalculador = $scope.tanque.tapa ?  calculos.estadoTanque.conTapa : calculos.estadoTanque.sinTapa;
 
