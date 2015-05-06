@@ -12,7 +12,7 @@ angular.module('simulador').factory('fluidos', [
 angular.module('simulador').factory('GotaFactory', [
     'CanvasCircleFactory', 'FPS', 'ESCALA_PX_MT',
     function (CanvasCircleFactory, FPS, ESCALA_PX_MT) {
-        return function (origenXpx, origenYpx, xInicialMt, yInicialMt, velocidadInicial, anguloTubo, gravedad, maxDistanceCallback, progressionDistanceCallback) {
+        return function (origenXpx, origenYpx, xInicialMt, yInicialMt, velocidadInicial, anguloTubo, gravedad, distanceCallback) {
             var x = xInicialMt,
                 y = yInicialMt,
                 velX0 = velocidadInicial * Math.cos(anguloTubo * (Math.PI / 180)),
@@ -30,8 +30,8 @@ angular.module('simulador').factory('GotaFactory', [
 
             var _instance = {
                 isMoving: true,
-                getX : function () {
-                    return x;
+                getXf : function () {
+                    return x - xInicialMt;
                 },
                 paint: paintAndUpdate
             };
@@ -47,13 +47,12 @@ angular.module('simulador').factory('GotaFactory', [
                     x = _posicionFinal(xInicialMt, velX0, 0, _tiempoFinal(yInicialMt, velY0, gravedad));
                     _instance.paint = circle.paint;
                     _instance.isMoving = false;
-                    maxDistanceCallback(x - xInicialMt);
-                    progressionDistanceCallback(x - xInicialMt);
                 }
                 velX = _velocidadFinal(velX, 0, deltaTiempo);
                 velY = _velocidadFinal(velY, gravedad, deltaTiempo);
                 circle.x = origenXpx + x * ESCALA_PX_MT;
                 circle.y = origenYpx - y * ESCALA_PX_MT;
+                distanceCallback(x - xInicialMt);
             }
 
             function _posicionFinal(posicionInicial, velocidadInicial, aceleracion, tiempo) {
