@@ -1,0 +1,9 @@
+<button type="button" class="btn btn-primary navbar-btn" ng-hide="working || loadingResources" bs-modal="modal" data-template="view/parametros.html" data-container="body" ng-click="!!$hide && $hide();">
+    Parametros
+</button>
+<button type="button" class="btn btn-primary navbar-btn" ng-hide="working || loadingResources" ng-click="startSimulation(); !!$hide && $hide();">
+    Iniciar simulaci&oacute;n
+</button>
+<button type="button" class="btn btn-primary navbar-btn" ng-show="working && !loadingResources" ng-click="stopSimulation(); !!$hide && $hide();">
+    Detener simulaci&oacute;n
+</button>

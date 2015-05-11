@@ -1,0 +1,28 @@
+[
+  {
+    "nombre": "Agua",
+    "densidad": 999.97,
+    "coeficienteTensionSuperficial": 0.07275
+  },
+  {
+  	"nombre": "Agua de mar",
+    "densidad": 1030,
+    "coeficienteTensionSuperficial": 0.078
+  },
+  {
+  	"nombre": "Alcohol etílico",
+    "densidad": 789,
+    "coeficienteTensionSuperficial": 0.02275
+  },
+  {
+  	"nombre": "Benceno",
+    "densidad": 876.50,
+    "coeficienteTensionSuperficial": 0.02885
+  },
+  {
+  	"nombre": "Mercurio",
+    "densidad": 13546,
+    "coeficienteTensionSuperficial": 0.484
+  }
+
+]

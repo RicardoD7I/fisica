@@ -1,91 +1,106 @@
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	
-	<title>Final de Fisica I - UCALP</title>
-	
-	<!-- Estilos -->
-	<link href="css/examples.css" rel="stylesheet" type="text/css">
-	
-	<!-- Librerias -->
-	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/lib/excanvas.min.js"></script><![endif]-->
-	<script language="javascript" type="text/javascript" src="js/lib/jquery.js"></script>
-	<script language="javascript" type="text/javascript" src="js/lib/jquery.flot.js"></script>
-	<script language="javascript" type="text/javascript" src="js/lib/jquery.flot.animator.min.js"></script>
-	
-	
-	<!-- Codigo de la aplicacion -->
-	<script language="javascript" type="text/javascript" src="js/calculos.js"></script>
-	<script language="javascript" type="text/javascript" src="js/animaciones.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<!-- Inicializacion -->	
-	<script language="javascript" type="text/javascript" src="js/app.js"></script>
-	
-	
+    <title>Final de Fisica I - UCALP</title>
 
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap-additions/dist/bootstrap-additions.min.css"/>
+    <link rel="stylesheet" href="bower_components/angular-motion/dist/angular-motion.min.css"/>
+
+    <link rel="stylesheet" href="css/app.css"/>
 </head>
-<body>
 
-	<div id="header">
-		<h2>Fisica I </h2>
-	</div>
+<body ng-app="simulador" ng-controller="homeController">
 
-	
-	<div class="container">
-		<div class="demo-container" >
-			<div class="fields"> 
-				<h2>Parametros</h2>
-				
-				<label> Campo 1
-					<input id="" type="text" class="campo" />
-				</label>
-				
-				<label class="col_2"> Campo 3
-					<input id="" type="text" class="campo" />
-				</label>
-				
-				<br/><br/>
-				
-				<label> Campo 2
-					<input id="" type="text" class="campo" />
-				</label>
-				
-				<label class="col_2"> Campo 4
-					<input id="" type="text" class="campo" />
-				</label>
-				
-				<br/><br/>
-				
-				<label> Tipo:
-					<select id="tipo_simulacion">
-						<option value="vertical"> Vertical</option>
-						<option value="horizontal"> Horizontal</option>
-					</select>
-				</label>
-				
-				<br/><br/>
-				
-				<div style="float:right;">
-					<input id="simular" type="button" value="Simular">
-				</div>
-				
-			
-			</div>
-			<img src="img/tanque.png" style="width:345px;position:absolute; margin-top:200px;"/>
-			<div id="line" class="caudal-vertical"></div>
-			<div id="placeholder" class="demo-placeholder" style="margin-top: 325px;margin-left: 230px; width:700px;"></div>
-		</div>
-	</div>
-	
-	
-	<div class="footer">
-		<b>Integrantes:</b> Maximiliano Stranich,  Ignacio Diaz Maurino, Ricardo Daniel Vella
-	</div>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <img class="pull-left" src="img/logo.png" style="height: 50px;">
+            <span class="navbar-brand">
+                &nbsp;
+                <span class="hidden-xs">Fisica 1 - </span>
+                Simulaci&oacute;n fluidos
+            </span>
+            <button type="button" class="navbar-toggle" bs-aside="aside" data-placement="right" data-container="body" data-template="view/navbar/aside.html">
+                <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="hidden-xs pull-right" ng-include="'view/navbar/actions.html'"></div>
+    </div>
+</nav>
 
+<div class="container after-nav simulator-container">
+    <canvas id="canvasSimulador" class="simulator" width="800" height="600" data-fps="FPS"></canvas>
+    <div class="output">
+        <div class="alert alert-warning">
+            <span id="status" class="h4">Inicializando...</span>
+            <table >
+                <tr>
+                    <th class="hidden-xs">Tiempo transcurrido:&nbsp;</th>
+                    <th class="visible-xs">&Delta;t&nbsp;</th>
+                    <td><span id="tiempo">0</span>&nbsp;s</td>
+                </tr>
+                <tr>
+                    <th class="hidden-xs">Nivel del agua:&nbsp;</th>
+                    <th class="visible-xs">h<sub>H<sub>2</sub>O</sub>&nbsp;</th>
+                    <td><span id="nivel">0</span>&nbsp;%</td>
+                </tr>
+                <tr>
+                    <th class="hidden-xs">Velocidad m&aacute;xima:&nbsp;</th>
+                    <th class="visible-xs">v<sub>m&aacute;x</sub>&nbsp;</th>
+                    <td><span id="velMax">0</span>&nbsp;m/s</td>
+                </tr>
+                <tr>
+                    <th class="hidden-xs">Distancia m&aacute;xima:&nbsp;</th>
+                    <th class="visible-xs">r<sub>m&aacute;x</sub>&nbsp;</th>
+                    <td><span id="distMax">0</span>&nbsp;m</td>
+                </tr>
+                <tr>
+                    <th class="hidden-xs">Velocidad actual:&nbsp;</th>
+                    <th class="visible-xs">v<sub>f</sub>&nbsp;</th>
+                    <td><span id="velAct">0</span>&nbsp;m/s</td>
+                </tr>
+                <tr>
+                    <th class="hidden-xs">Distancia actual:&nbsp;</th>
+                    <th class="visible-xs">r<sub>f</sub>&nbsp;</th>
+                    <td><span id="distAct">0</span>&nbsp;m</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
 
+<footer class="clearfix">
+    <div class="container">
+        <p class="text-muted"><b>Integrantes:</b> Maximiliano Stranich, Ignacio Diaz Maurino, Ricardo Daniel Vella, Pablo Shiiba</p>
+    </div>
+</footer>
 
+<!-- LibrerÃ­as de terceros -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
+<script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+<script src="bower_components/mathjs/dist/math.min.js"></script>
+
+<!-- LibrerÃ­as propias -->
+<script src="js/canvas.js" type="text/javascript"></script>
+<script src="js/canvas.services.js" type="text/javascript"></script>
+<script src="js/canvas.factories.js" type="text/javascript"></script>
+<script src="js/canvas.directives.js" type="text/javascript"></script>
+
+<!-- CÃ³digo de la aplicaciÃ³n  -->
+<script src="js/simulador.app.js"></script>
+<script src="js/simulador.directives.js"></script>
+<script src="js/simulador.factories.js"></script>
+<script src="js/simulador.services.js"></script>
+<script src="js/simulador.controllers.home.js"></script>
+<script src="js/simulador.controllers.parametros.js"></script>
 
 </body>
 </html>
