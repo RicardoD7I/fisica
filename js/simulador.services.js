@@ -8,11 +8,12 @@ angular.module('simulador').service('calculos', [
             _calcularAltura = math.compile("((altura * baseTanque) - caudal / " + FPS + ") / baseTanque");
 
         /* ESTADO TANQUE SOLO CON TAPA */
-        var _calculoPresionGas = math.compile("densidadGas * gravedad * alturaGas"),// TODO: candidato a remover
-            _calcularVelocidadConGas = math.compile("sqrt(((2 * (presionGas - presionSalida)) / densidadLiquido) + 2 * gravedad * (alturaInicial - alturaTubo))");
+        var _calcularVelocidadConGas = math.compile("sqrt(((2 * (presionGas - presionSalida)) / densidadLiquido) + 2 * gravedad * (alturaInicial - alturaTubo))"),
+            _evaluarGoteoConGas = math.compile('(presionGas + densidad * gravedad * (alturaLiquido - alturaTubo) - presionSalida) <= (coeficiente / diametro / 2)');
 
         /* ESTADO TANQUE SIN SIN TAPA */
-        var _calcularVelocidadSinGas = math.compile("sqrt(2 *  gravedad * (alturaInicial - alturaTubo))");
+        var _calcularVelocidadSinGas = math.compile("sqrt(2 *  gravedad * (alturaInicial - alturaTubo))"),
+            _evaluarGoteoSinGas = math.compile('(densidad * gravedad * (alturaLiquido - alturaTubo)) <= (coeficiente / diametro / 2)');
 
         /* OTRAS FUNCIONES AUXILIARES */
         var _calculoArea = math.compile("((d / 2) ^ 2) * PI"),
@@ -27,6 +28,16 @@ angular.module('simulador').service('calculos', [
                     baseTanque: valoresCalculo.areaBaseTanque,
                     caudal: _calculoCaudal.eval(valoresCalculo)
                 });
+                valoresCalculo.goteo = _evaluarGoteoConGas.eval({
+                    presionGas: valoresCalculo.presionGas,
+                    densidad: valoresCalculo.densidadLiquido,
+                    gravedad: valoresCalculo.gravedad,
+                    alturaLiquido: valoresCalculo.alturaInicial,
+                    alturaTubo: valoresCalculo.alturaTubo,
+                    presionSalida: valoresCalculo.presionSalida,
+                    coeficiente: valoresCalculo.coeficienteTensionSuperficial,
+                    diametro: valoresCalculo.diametroTanque
+                });
                 if (valoresCalculo.alturaInicial < valoresCalculo.alturaTubo) {
                     valoresCalculo.alturaInicial = valoresCalculo.alturaTubo;
                 }
@@ -38,6 +49,16 @@ angular.module('simulador').service('calculos', [
                     altura: valoresCalculo.alturaInicial,
                     baseTanque: valoresCalculo.areaBaseTanque,
                     caudal: _calculoCaudal.eval(valoresCalculo)
+                });
+                valoresCalculo.goteo = _evaluarGoteoSinGas.eval({
+                    presionGas: valoresCalculo.presionGas,
+                    densidad: valoresCalculo.densidadLiquido,
+                    gravedad: valoresCalculo.gravedad,
+                    alturaLiquido: valoresCalculo.alturaInicial,
+                    alturaTubo: valoresCalculo.alturaTubo,
+                    presionSalida: valoresCalculo.presionSalida,
+                    coeficiente: valoresCalculo.coeficienteTensionSuperficial,
+                    diametro: valoresCalculo.diametroTanque
                 });
                 if (valoresCalculo.alturaInicial < valoresCalculo.alturaTubo) {
                     valoresCalculo.alturaInicial = valoresCalculo.alturaTubo;

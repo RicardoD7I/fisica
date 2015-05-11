@@ -61,7 +61,7 @@ angular.module('simulador').controller('homeController', [
                             outputVelAct.textContent = outputDistAct.textContent = 0;
 
                     _interval = setInterval(function () {
-                        updateOutput('Simulando...');
+                        updateOutput(valoresCalculo.goteo ? 'Simulando (goteo) ...' :'Simulando...');
                     }, 1000);
                     return timer;
                 },
@@ -258,11 +258,13 @@ angular.module('simulador').controller('homeController', [
                 densidadLiquido: $scope.tanque.fluido.densidad,
                 alturaInicial: math.eval($scope.tanque.altura + ' * ' + $scope.tanque.nivel + ' / 100'), //alturaInicial se refiere a la altura del liquido desde el fondo del tanque hasta el pelo de agua
                 presionSalida: PRESION_ATMOSFERICA,
+                coeficienteTensionSuperficial: $scope.tanque.fluido.coeficienteTensionSuperficial,
 
                 /*Datos Tanque*/
                 areaOrificio: calculos.area.eval({d: math.unit($scope.tanque.orificio.diametro, 'cm').toNumber('m') }),
                 alturaTubo: ($scope.tanque.orificio.ubicacion == 'LATERAL') ? $scope.tanque.orificio.altura : 0,
                 areaBaseTanque: calculos.area.eval({d: parseFloat($scope.tanque.diametro)}),
+                diametroTanque: $scope.tanque.diametro,
 
                 /*Salida*/
                 velocidadSalida: 0,
